@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "netbox-lifecycle"
+version = "0.1.0"
+description = "Device/software/hardware lifecycle management plugin for NetBox, modeled on Nautobot's Device Lifecycle Management app"
+requires-python = ">=3.10"
+dependencies = [
+    "requests>=2.28",
+]
+
+[tool.setuptools.packages.find]
+include = ["netbox_lifecycle*"]

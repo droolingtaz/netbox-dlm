@@ -1,0 +1,35 @@
+<div class="card">
+    <h5 class="card-header">Hardware Lifecycle</h5>
+    <div class="card-body">
+        {% if hardware_notice %}
+            <table class="table table-hover attr-table">
+                <tr>
+                    <th scope="row">End of Sale</th>
+                    <td>{{ hardware_notice.end_of_sale|default:"—" }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">End of Support</th>
+                    <td>
+                        {{ hardware_notice.end_of_support|default:"—" }}
+                        {% if hardware_notice.end_of_support_passed %}
+                            <span class="badge text-bg-danger">Past</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">End of Security Patches</th>
+                    <td>{{ hardware_notice.end_of_security_patches|default:"—" }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">End of SW Releases</th>
+                    <td>{{ hardware_notice.end_of_sw_releases|default:"—" }}</td>
+                </tr>
+            </table>
+            <a href="{{ hardware_notice.get_absolute_url }}" class="btn btn-sm btn-outline-secondary">View notice</a>
+        {% else %}
+            <span class="text-muted">No hardware notice on file.</span>
+            <a href="{% url 'plugins:netbox_lifecycle:hardwarenotice_add' %}?device_type={{ object.pk }}"
+               class="btn btn-sm btn-outline-primary mt-2">Add notice</a>
+        {% endif %}
+    </div>
+</div>

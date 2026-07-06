@@ -1,0 +1,26 @@
+{% extends 'generic/object.html' %}
+{% load helpers %}
+
+{% block content %}
+<div class="row mb-3">
+  <div class="col col-md-6">
+    <div class="card">
+      <h5 class="card-header">Software Image File</h5>
+      <table class="table table-hover attr-table">
+        <tr><th scope="row">Software version</th><td>{{ object.software_version|linkify }}</td></tr>
+        <tr><th scope="row">File name</th><td>{{ object.file_name }}</td></tr>
+        <tr><th scope="row">Hashing algorithm</th><td>{{ object.get_hashing_algorithm_display|placeholder }}</td></tr>
+        <tr><th scope="row">Checksum</th><td><code>{{ object.checksum|placeholder }}</code></td></tr>
+        <tr><th scope="row">File size</th><td>{{ object.file_size|filesizeformat|placeholder }}</td></tr>
+        <tr><th scope="row">Download URL</th><td>{{ object.download_url|linkify|placeholder }}</td></tr>
+        <tr><th scope="row">Default image</th><td>{{ object.default_image|checkmark }}</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="col col-md-6">
+    {% include 'inc/panels/custom_fields.html' %}
+    {% include 'inc/panels/tags.html' %}
+    {% include 'inc/panels/comments.html' %}
+  </div>
+</div>
+{% endblock %}

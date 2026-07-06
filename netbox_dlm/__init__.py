@@ -2,7 +2,7 @@ from netbox.plugins import PluginConfig
 
 
 class DeviceLifecycleConfig(PluginConfig):
-    name = "netbox_lifecycle"
+    name = "netbox_dlm"
     verbose_name = "Device Lifecycle Management"
     description = (
         "Track hardware end-of-life/end-of-support notices, software versions and "

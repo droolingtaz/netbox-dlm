@@ -23,7 +23,7 @@ class DeviceLifecyclePanel(PluginTemplateExtension):
             ]
 
         return self.render(
-            "netbox_lifecycle/device_lifecycle_panel.html",
+            "netbox_dlm/device_lifecycle_panel.html",
             extra_context={
                 "software": software,
                 "hardware_notice": hardware_notice,
@@ -42,7 +42,7 @@ class DeviceTypeLifecyclePanel(PluginTemplateExtension):
         device_type = self.context["object"]
         hardware_notice = HardwareNotice.objects.filter(device_type=device_type).first()
         return self.render(
-            "netbox_lifecycle/devicetype_lifecycle_panel.html",
+            "netbox_dlm/devicetype_lifecycle_panel.html",
             extra_context={"hardware_notice": hardware_notice},
         )
 

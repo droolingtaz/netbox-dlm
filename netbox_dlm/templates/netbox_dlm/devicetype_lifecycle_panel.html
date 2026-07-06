@@ -28,7 +28,7 @@
             <a href="{{ hardware_notice.get_absolute_url }}" class="btn btn-sm btn-outline-secondary">View notice</a>
         {% else %}
             <span class="text-muted">No hardware notice on file.</span>
-            <a href="{% url 'plugins:netbox_lifecycle:hardwarenotice_add' %}?device_type={{ object.pk }}"
+            <a href="{% url 'plugins:netbox_dlm:hardwarenotice_add' %}?device_type={{ object.pk }}"
                class="btn btn-sm btn-outline-primary mt-2">Add notice</a>
         {% endif %}
     </div>

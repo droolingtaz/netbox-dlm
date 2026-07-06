@@ -38,7 +38,7 @@ class Provider(NetBoxModel):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("plugins:netbox_lifecycle:provider", args=[self.pk])
+        return reverse("plugins:netbox_dlm:provider", args=[self.pk])
 
 
 class Contract(NetBoxModel):
@@ -73,7 +73,7 @@ class Contract(NetBoxModel):
         return f"{self.name} ({self.provider})"
 
     def get_absolute_url(self):
-        return reverse("plugins:netbox_lifecycle:contract", args=[self.pk])
+        return reverse("plugins:netbox_dlm:contract", args=[self.pk])
 
     def clean(self):
         super().clean()
@@ -144,7 +144,7 @@ class HardwareNotice(NetBoxModel):
         return f"Hardware notice: {target}"
 
     def get_absolute_url(self):
-        return reverse("plugins:netbox_lifecycle:hardwarenotice", args=[self.pk])
+        return reverse("plugins:netbox_dlm:hardwarenotice", args=[self.pk])
 
     def clean(self):
         super().clean()
@@ -192,7 +192,7 @@ class SoftwareVersion(NetBoxModel):
         return self.alias or f"{self.platform} {self.version}"
 
     def get_absolute_url(self):
-        return reverse("plugins:netbox_lifecycle:softwareversion", args=[self.pk])
+        return reverse("plugins:netbox_dlm:softwareversion", args=[self.pk])
 
     @property
     def end_of_support_passed(self):
@@ -228,7 +228,7 @@ class SoftwareImageFile(NetBoxModel):
         return self.file_name
 
     def get_absolute_url(self):
-        return reverse("plugins:netbox_lifecycle:softwareimagefile", args=[self.pk])
+        return reverse("plugins:netbox_dlm:softwareimagefile", args=[self.pk])
 
 
 class DeviceSoftware(NetBoxModel):
@@ -252,7 +252,7 @@ class DeviceSoftware(NetBoxModel):
         return f"{self.device}: {self.software_version}"
 
     def get_absolute_url(self):
-        return reverse("plugins:netbox_lifecycle:devicesoftware", args=[self.pk])
+        return reverse("plugins:netbox_dlm:devicesoftware", args=[self.pk])
 
 
 class ValidatedSoftware(NetBoxModel):
@@ -284,7 +284,7 @@ class ValidatedSoftware(NetBoxModel):
         return f"Validated: {self.software_version}"
 
     def get_absolute_url(self):
-        return reverse("plugins:netbox_lifecycle:validatedsoftware", args=[self.pk])
+        return reverse("plugins:netbox_dlm:validatedsoftware", args=[self.pk])
 
     def clean(self):
         super().clean()
@@ -345,7 +345,7 @@ class CVE(NetBoxModel):
         return self.cve_id
 
     def get_absolute_url(self):
-        return reverse("plugins:netbox_lifecycle:cve", args=[self.pk])
+        return reverse("plugins:netbox_dlm:cve", args=[self.pk])
 
 
 class Vulnerability(NetBoxModel):
@@ -385,4 +385,4 @@ class Vulnerability(NetBoxModel):
         return f"{self.cve} @ {scope}"
 
     def get_absolute_url(self):
-        return reverse("plugins:netbox_lifecycle:vulnerability", args=[self.pk])
+        return reverse("plugins:netbox_dlm:vulnerability", args=[self.pk])

@@ -1,4 +1,4 @@
-# netbox-lifecycle
+# netbox-dlm
 
 A NetBox plugin for hardware/software lifecycle management, modeled after
 Nautobot's Device Lifecycle Management (DLM) app — built as a real NetBox
@@ -33,7 +33,7 @@ simplification versus Nautobot's stored `DeviceHardwareNoticeResult` /
 ## Package layout
 
 ```
-netbox_lifecycle/
+netbox_dlm/
 ├── __init__.py                          # PluginConfig
 ├── models.py                            # Provider, Contract, HardwareNotice, SoftwareVersion,
 │                                        # SoftwareImageFile, DeviceSoftware, ValidatedSoftware,
@@ -48,7 +48,7 @@ netbox_lifecycle/
 ├── navigation.py                        # Nav menu ("Device Lifecycle")
 ├── template_content.py                  # Panels injected onto Device/DeviceType pages
 ├── scripts.py                           # CheckHardwareNotices, RunSoftwareValidation, SyncCVEs
-├── templates/netbox_lifecycle/
+├── templates/netbox_dlm/
 │   ├── device_lifecycle_panel.html
 │   └── devicetype_lifecycle_panel.html
 ├── api/
@@ -61,24 +61,24 @@ netbox_lifecycle/
 
 ## Installation
 
-1. Copy `netbox_lifecycle/` onto your NetBox host inside the same
+1. Copy `netbox_dlm/` onto your NetBox host inside the same
    Python environment as NetBox, or install it editable via the included
    `pyproject.toml`:
 
    ```bash
-   pip install -e /path/to/netbox_lifecycle
+   pip install -e /path/to/netbox_dlm
    ```
 
 2. Add to `configuration.py`:
 
    ```python
    PLUGINS = [
-       "netbox_lifecycle",
+       "netbox_dlm",
        # ... your other plugins
    ]
 
    PLUGINS_CONFIG = {
-       "netbox_lifecycle": {
+       "netbox_dlm": {
            "nist_api_key": None,       # optional, raises NVD API rate limits
            "eos_warning_days": 180,
        },
@@ -92,7 +92,7 @@ netbox_lifecycle/
 
    ```bash
    cd /opt/netbox/netbox   # your NetBox root
-   python3 manage.py makemigrations netbox_lifecycle
+   python3 manage.py makemigrations netbox_dlm
    python3 manage.py migrate
    ```
 

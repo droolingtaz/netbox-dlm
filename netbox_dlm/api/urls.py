@@ -2,7 +2,7 @@ from netbox.api.routers import NetBoxRouter
 
 from . import views
 
-app_name = "netbox_lifecycle-api"
+app_name = "netbox_dlm-api"
 
 router = NetBoxRouter()
 

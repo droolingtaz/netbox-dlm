@@ -31,7 +31,7 @@ from ..models import (
 
 class ProviderSerializer(NetBoxModelSerializer):
     url = serializers.HyperlinkedIdentityField(
-        view_name="plugins-api:netbox_lifecycle-api:provider-detail"
+        view_name="plugins-api:netbox_dlm-api:provider-detail"
     )
 
     class Meta:
@@ -45,7 +45,7 @@ class ProviderSerializer(NetBoxModelSerializer):
 
 class ContractSerializer(NetBoxModelSerializer):
     url = serializers.HyperlinkedIdentityField(
-        view_name="plugins-api:netbox_lifecycle-api:contract-detail"
+        view_name="plugins-api:netbox_dlm-api:contract-detail"
     )
     provider = ProviderSerializer(nested=True)
     support_level = ChoiceField(choices=ContractSupportLevelChoices, required=False)
@@ -62,7 +62,7 @@ class ContractSerializer(NetBoxModelSerializer):
 
 class HardwareNoticeSerializer(NetBoxModelSerializer):
     url = serializers.HyperlinkedIdentityField(
-        view_name="plugins-api:netbox_lifecycle-api:hardwarenotice-detail"
+        view_name="plugins-api:netbox_dlm-api:hardwarenotice-detail"
     )
     device_type = DeviceTypeSerializer(nested=True, required=False, allow_null=True)
     module_type = ModuleTypeSerializer(nested=True, required=False, allow_null=True)
@@ -79,7 +79,7 @@ class HardwareNoticeSerializer(NetBoxModelSerializer):
 
 class SoftwareVersionSerializer(NetBoxModelSerializer):
     url = serializers.HyperlinkedIdentityField(
-        view_name="plugins-api:netbox_lifecycle-api:softwareversion-detail"
+        view_name="plugins-api:netbox_dlm-api:softwareversion-detail"
     )
     platform = PlatformSerializer(nested=True)
 
@@ -95,7 +95,7 @@ class SoftwareVersionSerializer(NetBoxModelSerializer):
 
 class SoftwareImageFileSerializer(NetBoxModelSerializer):
     url = serializers.HyperlinkedIdentityField(
-        view_name="plugins-api:netbox_lifecycle-api:softwareimagefile-detail"
+        view_name="plugins-api:netbox_dlm-api:softwareimagefile-detail"
     )
     software_version = SoftwareVersionSerializer(nested=True)
     hashing_algorithm = ChoiceField(choices=HashingAlgorithmChoices, required=False)
@@ -111,7 +111,7 @@ class SoftwareImageFileSerializer(NetBoxModelSerializer):
 
 class DeviceSoftwareSerializer(NetBoxModelSerializer):
     url = serializers.HyperlinkedIdentityField(
-        view_name="plugins-api:netbox_lifecycle-api:devicesoftware-detail"
+        view_name="plugins-api:netbox_dlm-api:devicesoftware-detail"
     )
     device = DeviceSerializer(nested=True)
     software_version = SoftwareVersionSerializer(nested=True)
@@ -126,7 +126,7 @@ class DeviceSoftwareSerializer(NetBoxModelSerializer):
 
 class ValidatedSoftwareSerializer(NetBoxModelSerializer):
     url = serializers.HyperlinkedIdentityField(
-        view_name="plugins-api:netbox_lifecycle-api:validatedsoftware-detail"
+        view_name="plugins-api:netbox_dlm-api:validatedsoftware-detail"
     )
     software_version = SoftwareVersionSerializer(nested=True)
     device_types = DeviceTypeSerializer(nested=True, many=True, required=False)
@@ -144,7 +144,7 @@ class ValidatedSoftwareSerializer(NetBoxModelSerializer):
 
 class CVESerializer(NetBoxModelSerializer):
     url = serializers.HyperlinkedIdentityField(
-        view_name="plugins-api:netbox_lifecycle-api:cve-detail"
+        view_name="plugins-api:netbox_dlm-api:cve-detail"
     )
     status = ChoiceField(choices=CVEStatusChoices, required=False)
     severity = ChoiceField(choices=CVESeverityChoices, required=False)
@@ -162,7 +162,7 @@ class CVESerializer(NetBoxModelSerializer):
 
 class VulnerabilitySerializer(NetBoxModelSerializer):
     url = serializers.HyperlinkedIdentityField(
-        view_name="plugins-api:netbox_lifecycle-api:vulnerability-detail"
+        view_name="plugins-api:netbox_dlm-api:vulnerability-detail"
     )
     cve = CVESerializer(nested=True)
     software_version = SoftwareVersionSerializer(nested=True)

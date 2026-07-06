@@ -34,20 +34,20 @@ simplification versus Nautobot's stored `DeviceHardwareNoticeResult` /
 
 ```
 netbox_lifecycle/
-├── __init__.py               # PluginConfig
-├── models.py                 # Provider, Contract, HardwareNotice, SoftwareVersion,
-│                              # SoftwareImageFile, DeviceSoftware, ValidatedSoftware,
-│                              # CVE, Vulnerability
-├── choices.py                 # ChoiceSets
-├── admin.py                    # Django admin registrations
-├── forms.py                     # NetBoxModelForm / FilterSetForm classes
-├── tables.py                     # NetBoxTable classes
-├── filtersets.py                  # NetBoxModelFilterSet classes
-├── views.py                        # Generic CRUD views
-├── urls.py                          # UI URL routing
-├── navigation.py                     # Nav menu ("Device Lifecycle")
-├── template_content.py                # Panels injected onto Device/DeviceType pages
-├── scripts.py                          # CheckHardwareNotices, RunSoftwareValidation, SyncCVEs
+├── __init__.py                          # PluginConfig
+├── models.py                            # Provider, Contract, HardwareNotice, SoftwareVersion,
+│                                        # SoftwareImageFile, DeviceSoftware, ValidatedSoftware,
+│                                        # CVE, Vulnerability
+├── choices.py                           # ChoiceSets
+├── admin.py                             # Django admin registrations
+├── forms.py                             # NetBoxModelForm / FilterSetForm classes
+├── tables.py                            # NetBoxTable classes
+├── filtersets.py                        # NetBoxModelFilterSet classes
+├── views.py                             # Generic CRUD views
+├── urls.py                              # UI URL routing
+├── navigation.py                        # Nav menu ("Device Lifecycle")
+├── template_content.py                  # Panels injected onto Device/DeviceType pages
+├── scripts.py                           # CheckHardwareNotices, RunSoftwareValidation, SyncCVEs
 ├── templates/netbox_lifecycle/
 │   ├── device_lifecycle_panel.html
 │   └── devicetype_lifecycle_panel.html
@@ -56,7 +56,7 @@ netbox_lifecycle/
 │   ├── views.py
 │   └── urls.py
 └── migrations/
-    └── __init__.py             # run `manage.py makemigrations` in your env (see below)
+    └── __init__.py                       # run `manage.py makemigrations` in your env (see below)
 ```
 
 ## Installation

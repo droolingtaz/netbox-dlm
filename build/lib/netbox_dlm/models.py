@@ -191,10 +191,6 @@ class SoftwareVersion(NetBoxModel):
     def __str__(self):
         return self.alias or f"{self.platform} {self.version}"
 
-    @property
-    def display(self):
-        return str(self)
-
     def get_absolute_url(self):
         return reverse("plugins:netbox_dlm:softwareversion", args=[self.pk])
 

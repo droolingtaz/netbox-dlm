@@ -1,0 +1,95 @@
+{% extends 'generic/object.html' %}
+{% load helpers %}
+
+{% block content %}
+<div class="row mb-3">
+  <div class="col col-md-6">
+    <div class="card">
+      <h5 class="card-header">Software Version</h5>
+      <table class="table table-hover attr-table">
+        <tr>
+          <th scope="row">Platform</th>
+          <td>{{ object.platform|linkify }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Version</th>
+          <td>{{ object.version }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Alias</th>
+          <td>{{ object.alias|placeholder }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Release date</th>
+          <td>{{ object.release_date|placeholder }}</td>
+        </tr>
+        <tr>
+          <th scope="row">End of support</th>
+          <td>
+            {{ object.end_of_support|placeholder }}
+            {% if object.end_of_support_passed %}<span class="badge text-bg-red">Past due</span>{% endif %}
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">LTS</th>
+          <td>{{ object.long_term_support|checkmark }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Documentation</th>
+          <td>{{ object.documentation_url|linkify|placeholder }}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="col col-md-6">
+    {% include 'inc/panels/custom_fields.html' %}
+    {% include 'inc/panels/tags.html' %}
+    {% include 'inc/panels/comments.html' %}
+  </div>
+</div>
+
+<div class="row mb-3">
+  <div class="col col-md-4">
+    <div class="card">
+      <h5 class="card-header">Image Files ({{ image_files.count }})</h5>
+      <ul class="list-group list-group-flush">
+        {% for image in image_files %}
+        <li class="list-group-item">{{ image|linkify }}</li>
+        {% empty %}
+        <li class="list-group-item text-muted">None</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="col col-md-4">
+    <div class="card">
+      <h5 class="card-header">Validated Software Rules ({{ validated_rules.count }})</h5>
+      <ul class="list-group list-group-flush">
+        {% for rule in validated_rules %}
+        <li class="list-group-item">
+          {{ rule|linkify }}
+          {% if rule.preferred %}<span class="badge text-bg-green">Preferred</span>{% endif %}
+        </li>
+        {% empty %}
+        <li class="list-group-item text-muted">None</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="col col-md-4">
+    <div class="card">
+      <h5 class="card-header">CVEs ({{ cves.count }})</h5>
+      <ul class="list-group list-group-flush">
+        {% for cve in cves %}
+        <li class="list-group-item">
+          {{ cve|linkify }}
+          <span class="badge text-bg-{{ cve.severity|lower }}">{{ cve.get_severity_display }}</span>
+        </li>
+        {% empty %}
+        <li class="list-group-item text-muted">None</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

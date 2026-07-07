@@ -13,3 +13,6 @@ dependencies = [
 
 [tool.setuptools.packages.find]
 include = ["netbox_dlm*"]
+
+[tool.setuptools.package-data]
+netbox_dlm = ["templates/netbox_dlm/*.html"]

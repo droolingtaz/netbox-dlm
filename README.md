@@ -129,6 +129,24 @@ Device and DeviceType pages get a right-hand panel (via `template_content.py`)
 summarizing running software, compliance status, hardware notice, and open
 vulnerabilities at a glance.
 
+## Testing
+
+```bash
+./scripts/test-templates.sh
+```
+
+First run clones `netbox-community/netbox` (pinned to the version this
+plugin targets) and builds a venv under `.dev/` (gitignored, ~150MB);
+subsequent runs reuse it. It compiles every template in
+`netbox_dlm/templates/netbox_dlm/` through NetBox's real template engine —
+no database or Redis needed, since template compilation never touches the
+ORM. This catches `TemplateSyntaxError`/`TemplateDoesNotExist` (bad
+`{% load %}`, filters used where a tag was needed, missing includes)
+before they reach a deployed host. It won't catch bugs that only manifest
+at render time against real data (e.g. a table column referencing a model
+attribute that silently resolves to nothing) — there's no substitute for
+exercising the view against a real NetBox + Postgres instance for that.
+
 ## What I didn't build (scope cuts, worth knowing about)
 
 - **Stored compliance-result models / history** — this plugin computes

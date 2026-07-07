@@ -1,1 +1,11 @@
 .DS_Store
+
+# Python build artifacts
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+
+# Local NetBox test harness (cloned/installed by scripts/test-templates.sh)
+.dev/

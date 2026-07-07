@@ -1,0 +1,47 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  package-build:
+    name: Package build sanity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build sdist and wheel
+        run: |
+          pip install build twine
+          python -m build
+          twine check dist/*
+      - name: Install built wheel and verify templates shipped
+        run: |
+          pip install dist/*.whl
+          python -c "
+          import netbox_dlm, os
+          tpl_dir = os.path.join(os.path.dirname(netbox_dlm.__file__), 'templates', 'netbox_dlm')
+          templates = [f for f in os.listdir(tpl_dir) if f.endswith('.html')]
+          assert templates, 'no templates found in installed package - check [tool.setuptools.package-data]'
+          print(f'{len(templates)} templates present in installed package')
+          "
+
+  template-compile:
+    name: Template compile check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Cache NetBox test checkout + venv
+        uses: actions/cache@v4
+        with:
+          path: .dev
+          key: netbox-test-env-${{ hashFiles('scripts/setup-test-env.sh') }}
+      - name: Run template compile checks
+        run: ./scripts/test-templates.sh

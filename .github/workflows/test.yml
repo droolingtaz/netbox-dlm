@@ -22,12 +22,20 @@ jobs:
       - name: Install built wheel and verify templates shipped
         run: |
           pip install dist/*.whl
+          # Run from outside the checkout: netbox_dlm/__init__.py imports
+          # netbox core (not installed in this job), and if cwd still
+          # contained the repo's own netbox_dlm/ dir, import would resolve
+          # to that source tree instead of the installed wheel - defeating
+          # the point of this check. find_spec avoids executing __init__.py.
+          cd /tmp
           python -c "
-          import netbox_dlm, os
-          tpl_dir = os.path.join(os.path.dirname(netbox_dlm.__file__), 'templates', 'netbox_dlm')
+          import importlib.util, os
+          spec = importlib.util.find_spec('netbox_dlm')
+          pkg_dir = os.path.dirname(spec.origin)
+          tpl_dir = os.path.join(pkg_dir, 'templates', 'netbox_dlm')
           templates = [f for f in os.listdir(tpl_dir) if f.endswith('.html')]
           assert templates, 'no templates found in installed package - check [tool.setuptools.package-data]'
-          print(f'{len(templates)} templates present in installed package')
+          print(f'{len(templates)} templates present in installed package: {pkg_dir}')
           "
 
   template-compile:

@@ -10,8 +10,8 @@
         <tr><th scope="row">Software version</th><td>{{ object.software_version|linkify }}</td></tr>
         <tr><th scope="row">Start</th><td>{{ object.start }}</td></tr>
         <tr><th scope="row">End</th><td>{{ object.end|placeholder }}</td></tr>
-        <tr><th scope="row">Preferred</th><td>{{ object.preferred|checkmark }}</td></tr>
-        <tr><th scope="row">Currently valid</th><td>{{ object.valid_now|checkmark }}</td></tr>
+        <tr><th scope="row">Preferred</th><td>{% checkmark object.preferred %}</td></tr>
+        <tr><th scope="row">Currently valid</th><td>{% checkmark object.valid_now %}</td></tr>
       </table>
     </div>
   </div>

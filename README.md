@@ -1,34 +1,30 @@
 # netbox-dlm
 
-A NetBox plugin for hardware/software lifecycle management, modeled after
-Nautobot's Device Lifecycle Management (DLM) app — built as a real NetBox
-plugin (Django models, not Custom Objects), since this needs background
-scripts, custom filtersets/API viewsets, and many-to-many scoping that
-Custom Objects doesn't support well.
+A NetBox plugin for hardware/software lifecycle management — built as a
+real NetBox plugin (Django models, not Custom Objects), since this needs
+background scripts, custom filtersets/API viewsets, and many-to-many
+scoping that Custom Objects doesn't support well.
 
 ## What it models
 
-| Nautobot DLM concept                              | This plugin                              |
-|-----------------------------------------------------|--------------------------------------------|
-| HardwareLCM                                          | `HardwareNotice` (DeviceType or ModuleType) |
-| SoftwareLCM / core SoftwareVersion                    | `SoftwareVersion` (per Platform)            |
-| SoftwareImageLCM / core SoftwareImageFile              | `SoftwareImageFile`                          |
-| Software on Device (core `Device.software_version`)     | `DeviceSoftware`                              |
-| ValidatedSoftwareLCM                                     | `ValidatedSoftware`                            |
-| ContractLCM                                              | `Contract`                                       |
-| ProviderLCM                                               | `Provider`                                        |
-| CVELCM                                                     | `CVE`                                               |
-| VulnerabilityLCM                                            | `Vulnerability`                                      |
+- `HardwareNotice` (DeviceType or ModuleType) — EoS/EoL/EoSecurity/EoSW dates
+- `SoftwareVersion` (per Platform)
+- `SoftwareImageFile`
+- `DeviceSoftware` — software actually running on a Device
+- `ValidatedSoftware` — approval rules
+- `Contract`
+- `Provider`
+- `CVE`
+- `Vulnerability`
 
-NetBox doesn't have Nautobot's native `SoftwareVersion`/`Contact` core
-models, so those are built from scratch here rather than reused.
+NetBox doesn't have native `SoftwareVersion`/`Contact` core models for
+this, so those are built from scratch here rather than reused.
 
 Reports are handled as **on-demand Scripts** (`scripts.py`) rather than
 stored "*Result" models — `CheckHardwareNotices` and `RunSoftwareValidation`
 compute compliance live against current data. This is a deliberate scope
-simplification versus Nautobot's stored `DeviceHardwareNoticeResult` /
-`DeviceSoftwareValidationResult` models; add those later as ordinary
-`NetBoxModel`s if you want historical trending of compliance over time.
+simplification; add stored result models later as ordinary `NetBoxModel`s
+if you want historical trending of compliance over time.
 
 ## Package layout
 
@@ -114,7 +110,7 @@ netbox_dlm/
   existing sync tooling — e.g. alongside `aci_netbox_sync` runs, or a Golden
   Config compliance pass).
 - **Validated Software** — approval rules scoped by `device_types`,
-  `device_roles`, and/or specific `devices` (M2M, like Nautobot's). A rule
+  `device_roles`, and/or specific `devices` (M2M). A rule
   with no scope at all applies to any device running that software version.
   `preferred=True` marks the target version for a given scope; `covers_device()`
   and `valid_now` do the compliance-check heavy lifting.
@@ -126,23 +122,21 @@ netbox_dlm/
   - `Run Software Validation` — flags devices whose recorded software has no
     currently-valid `ValidatedSoftware` rule, or isn't the preferred version.
   - `Sync CVEs from NIST NVD` — placeholder; wire up the actual NVD API 2.0
-    HTTP calls (the same NIST endpoint Nautobot DLM uses) once your NetBox
-    host has outbound access to `services.nvd.nist.gov`.
+    HTTP calls once your NetBox host has outbound access to
+    `services.nvd.nist.gov`.
 
 Device and DeviceType pages get a right-hand panel (via `template_content.py`)
 summarizing running software, compliance status, hardware notice, and open
-vulnerabilities at a glance — the "just like Nautobot" bit, since Nautobot's
-DLM surfaces this directly on the device page too.
+vulnerabilities at a glance.
 
 ## What I didn't build (scope cuts, worth knowing about)
 
-- **Stored compliance-result models / history** — Nautobot keeps
-  `DeviceSoftwareValidationResult` rows for trending; this plugin computes
-  compliance live via scripts instead. Straightforward to add later as
-  another `NetBoxModel` if you want a graphable history.
-- **Inventory item lifecycle** — Nautobot ties `HardwareLCM` to
-  `InventoryItem`/`InventoryItemGroup` too. NetBox's closest modern
-  equivalent is `Module`/`ModuleType`, which I used instead; if you're still
+- **Stored compliance-result models / history** — this plugin computes
+  compliance live via scripts rather than persisting result rows.
+  Straightforward to add later as another `NetBoxModel` if you want a
+  graphable history.
+- **Inventory item lifecycle** — hardware notices are scoped to
+  `Module`/`ModuleType` (NetBox's modern equivalent); if you're still
   using NetBox's legacy `InventoryItem` model for non-modular gear, that's a
   straightforward additional FK to add to `HardwareNotice`.
 - **VM software tracking** — `DeviceSoftware` only covers `Device`, not

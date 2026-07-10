@@ -52,7 +52,8 @@ netbox_dlm/
 │   ├── views.py
 │   └── urls.py
 └── migrations/
-    └── __init__.py                       # run `manage.py makemigrations` in your env (see below)
+    ├── __init__.py
+    └── 0001_initial.py                   # generated against NetBox v4.6.4 (see below)
 ```
 
 ## Installation
@@ -81,16 +82,19 @@ netbox_dlm/
    }
    ```
 
-3. **Generate and apply migrations against your actual NetBox version** —
-   this repo intentionally ships without a pre-built migration, since exact
-   field/constraint behavior is sensitive to the NetBox version pinned in
-   your venv:
+3. **Apply migrations:**
 
    ```bash
    cd /opt/netbox/netbox   # your NetBox root
-   python3 manage.py makemigrations netbox_dlm
    python3 manage.py migrate
    ```
+
+   The shipped `0001_initial` migration was generated against NetBox v4.6.4.
+   If your host runs a different NetBox version, run
+   `python3 manage.py makemigrations netbox_dlm` first and check the output
+   for unexpected diffs before migrating — field/constraint behavior on
+   NetBox's core models (`dcim.Device`, `dcim.Platform`, etc.) can shift
+   between versions.
 
 4. Restart NetBox (`systemctl restart netbox netbox-rq` or your equivalent).
    You should see "Device Lifecycle" in the left nav, and Scripts under

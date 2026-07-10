@@ -37,11 +37,17 @@ referencing a model field that silently resolves to nothing at render time.
   version is actually running in production — a mismatch means the template
   checks pass against a NetBox that doesn't match reality. Delete `.dev/` to
   force a re-clone after bumping it.
-- **No shipped migrations**: `netbox_dlm/migrations/` only contains
-  `__init__.py` on purpose (see README's Installation section). Don't
-  generate and commit a `0001_initial.py` here — exact field/constraint
-  behavior is sensitive to the installer's NetBox version, so migrations are
-  meant to be generated on the target host via `manage.py makemigrations`.
+- **Shipped migration tracks the NetBox version pin**: `netbox_dlm/migrations/0001_initial.py`
+  was generated against NetBox v4.6.4 (see README's Installation section).
+  If you change a model or bump the NetBox version pin, regenerate it —
+  `makemigrations` needs a real NetBox checkout with the plugin importable;
+  the same `.dev/netbox-src` + `.dev/venv` used by `test-templates.sh` works
+  for this (add the plugin to `PLUGINS` in its `configuration.py` and set
+  `DEVELOPER = True`, since NetBox's `makemigrations` command refuses to run
+  otherwise). Field/constraint behavior on NetBox's core models
+  (`dcim.Device`, `dcim.Platform`, etc.) is sensitive to NetBox version, so
+  always verify the regenerated migration against the version actually
+  running in production before shipping it.
 - **CI's package-build-sanity job runs from `/tmp`** (see
   `.github/workflows/test.yml`) specifically so `import netbox_dlm` resolves
   to the *installed wheel*, not this checkout's source tree. If you touch

@@ -21,7 +21,7 @@ classifiers = [
     "Topic :: System :: Networking",
 ]
 dependencies = [
-    "requests>=2.28",
+    "requests>=2.28,<3.0",
 ]
 
 [project.urls]

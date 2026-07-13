@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-07-13
+
+### Fixed
+
+- `SoftwareVersionTable.device_count`, `ContractTable.device_count`, and
+  `CVETable.vulnerability_count` raised `FieldError: Unsupported lookup
+  'count'` when sorted, because their django-tables2 accessors
+  (e.g. `devices_running__count`) only worked for rendering, not for the
+  `ORDER BY` NetBox builds from the same accessor. Replaced with
+  queryset-level `Count(..., distinct=True)` annotations.
+
 ## [0.3.0] - 2026-07-13
 
 ### Added
@@ -37,7 +48,8 @@ Initial release.
 - Packaging, CI (package-build sanity + template-compile checks), and PyPI
   release workflow.
 
-[Unreleased]: https://github.com/droolingtaz/netbox-dlm/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/droolingtaz/netbox-dlm/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.3.1
 [0.3.0]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.3.0
 [0.2.0]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.2.0
 [0.1.0]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.1.0

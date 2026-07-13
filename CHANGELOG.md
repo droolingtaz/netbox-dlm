@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-07-13
+
+### Security
+
+- SHA-pinned every third-party GitHub Action referenced in
+  `.github/workflows/` (with a version comment) instead of trusting
+  mutable major-version tags, since the release workflow's jobs hold
+  PyPI trusted-publishing and GitHub release write permissions.
+- Added Dependabot config (`pip` + `github-actions` ecosystems) to keep
+  the dependency and pinned action SHAs current.
+- Capped `requests` to `<3.0` instead of an unbounded lower-bound-only
+  pin.
+
 ## [0.3.1] - 2026-07-13
 
 ### Fixed
@@ -48,7 +61,8 @@ Initial release.
 - Packaging, CI (package-build sanity + template-compile checks), and PyPI
   release workflow.
 
-[Unreleased]: https://github.com/droolingtaz/netbox-dlm/compare/v0.3.1...HEAD
+[Unreleased]: https://github.com/droolingtaz/netbox-dlm/compare/v0.3.2...HEAD
+[0.3.2]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.3.2
 [0.3.1]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.3.1
 [0.3.0]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.3.0
 [0.2.0]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.2.0

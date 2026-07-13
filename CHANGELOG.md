@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-13
+
+### Added
+
+- Software Version list and detail page now show a count of devices
+  running that version (`SoftwareVersionTable.device_count`, and a
+  "Devices Running" panel on the detail page).
+
 ## [0.2.0] - 2026-07-09
 
 ### Added
@@ -29,6 +37,7 @@ Initial release.
 - Packaging, CI (package-build sanity + template-compile checks), and PyPI
   release workflow.
 
-[Unreleased]: https://github.com/droolingtaz/netbox-dlm/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/droolingtaz/netbox-dlm/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.3.0
 [0.2.0]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.2.0
 [0.1.0]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.1.0

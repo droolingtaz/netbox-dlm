@@ -122,6 +122,7 @@ class SoftwareVersionView(generic.ObjectView):
             "image_files": instance.image_files.all(),
             "validated_rules": instance.validated_rules.all(),
             "cves": instance.cves.all(),
+            "devices_running": instance.devices_running.select_related("device"),
         }
 
 

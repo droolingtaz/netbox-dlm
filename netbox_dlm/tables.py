@@ -75,15 +75,21 @@ class SoftwareVersionTable(NetBoxTable):
     display = tables.Column(linkify=True, verbose_name="Software Version")
     platform = tables.Column(linkify=True)
     long_term_support = columns.BooleanColumn(verbose_name="LTS")
+    device_count = tables.Column(
+        verbose_name="Devices", empty_values=(), accessor="devices_running__count"
+    )
     tags = columns.TagColumn()
 
     class Meta(NetBoxTable.Meta):
         model = SoftwareVersion
         fields = (
             "pk", "id", "display", "platform", "version", "release_date",
-            "end_of_support", "long_term_support", "documentation_url", "tags",
+            "end_of_support", "long_term_support", "documentation_url", "device_count", "tags",
         )
-        default_columns = ("display", "platform", "version", "release_date", "end_of_support", "long_term_support")
+        default_columns = (
+            "display", "platform", "version", "release_date",
+            "end_of_support", "long_term_support", "device_count",
+        )
 
 
 class SoftwareImageFileTable(NetBoxTable):

@@ -1,3 +1,5 @@
+from django.db.models import Count
+
 from netbox.views import generic
 
 from . import filtersets, forms, tables
@@ -48,7 +50,7 @@ class ProviderBulkDeleteView(generic.BulkDeleteView):
 # -----------------------------------------------------------------------------
 
 class ContractListView(generic.ObjectListView):
-    queryset = Contract.objects.all()
+    queryset = Contract.objects.annotate(device_count=Count("devices", distinct=True))
     table = tables.ContractTable
     filterset = filtersets.ContractFilterSet
     filterset_form = forms.ContractFilterForm
@@ -68,7 +70,7 @@ class ContractDeleteView(generic.ObjectDeleteView):
 
 
 class ContractBulkDeleteView(generic.BulkDeleteView):
-    queryset = Contract.objects.all()
+    queryset = Contract.objects.annotate(device_count=Count("devices", distinct=True))
     table = tables.ContractTable
     filterset = filtersets.ContractFilterSet
 
@@ -108,7 +110,7 @@ class HardwareNoticeBulkDeleteView(generic.BulkDeleteView):
 # -----------------------------------------------------------------------------
 
 class SoftwareVersionListView(generic.ObjectListView):
-    queryset = SoftwareVersion.objects.all()
+    queryset = SoftwareVersion.objects.annotate(device_count=Count("devices_running", distinct=True))
     table = tables.SoftwareVersionTable
     filterset = filtersets.SoftwareVersionFilterSet
     filterset_form = forms.SoftwareVersionFilterForm
@@ -136,7 +138,7 @@ class SoftwareVersionDeleteView(generic.ObjectDeleteView):
 
 
 class SoftwareVersionBulkDeleteView(generic.BulkDeleteView):
-    queryset = SoftwareVersion.objects.all()
+    queryset = SoftwareVersion.objects.annotate(device_count=Count("devices_running", distinct=True))
     table = tables.SoftwareVersionTable
     filterset = filtersets.SoftwareVersionFilterSet
 
@@ -236,7 +238,7 @@ class ValidatedSoftwareBulkDeleteView(generic.BulkDeleteView):
 # -----------------------------------------------------------------------------
 
 class CVEListView(generic.ObjectListView):
-    queryset = CVE.objects.all()
+    queryset = CVE.objects.annotate(vulnerability_count=Count("vulnerabilities", distinct=True))
     table = tables.CVETable
     filterset = filtersets.CVEFilterSet
     filterset_form = forms.CVEFilterForm
@@ -259,7 +261,7 @@ class CVEDeleteView(generic.ObjectDeleteView):
 
 
 class CVEBulkDeleteView(generic.BulkDeleteView):
-    queryset = CVE.objects.all()
+    queryset = CVE.objects.annotate(vulnerability_count=Count("vulnerabilities", distinct=True))
     table = tables.CVETable
     filterset = filtersets.CVEFilterSet
 

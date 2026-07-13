@@ -32,7 +32,7 @@ class ProviderTable(NetBoxTable):
 class ContractTable(NetBoxTable):
     name = tables.Column(linkify=True)
     provider = tables.Column(linkify=True)
-    device_count = tables.Column(verbose_name="Devices", empty_values=(), accessor="devices__count")
+    device_count = tables.Column(verbose_name="Devices")
     end_date = tables.Column()
     tags = columns.TagColumn()
 
@@ -75,9 +75,7 @@ class SoftwareVersionTable(NetBoxTable):
     display = tables.Column(linkify=True, verbose_name="Software Version")
     platform = tables.Column(linkify=True)
     long_term_support = columns.BooleanColumn(verbose_name="LTS")
-    device_count = tables.Column(
-        verbose_name="Devices", empty_values=(), accessor="devices_running__count"
-    )
+    device_count = tables.Column(verbose_name="Devices")
     tags = columns.TagColumn()
 
     class Meta(NetBoxTable.Meta):
@@ -134,9 +132,7 @@ class CVETable(NetBoxTable):
     cve_id = tables.Column(linkify=True)
     severity = columns.ChoiceFieldColumn()
     status = columns.ChoiceFieldColumn()
-    vulnerability_count = tables.Column(
-        verbose_name="Vulnerabilities", empty_values=(), accessor="vulnerabilities__count"
-    )
+    vulnerability_count = tables.Column(verbose_name="Vulnerabilities")
     tags = columns.TagColumn()
 
     class Meta(NetBoxTable.Meta):

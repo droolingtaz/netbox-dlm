@@ -53,7 +53,7 @@ class DeviceSoftwareViewSet(NetBoxModelViewSet):
 
 class ValidatedSoftwareViewSet(NetBoxModelViewSet):
     queryset = ValidatedSoftware.objects.prefetch_related(
-        "software_version", "device_types", "device_roles", "devices", "tags"
+        "software_version", "device_types", "device_roles", "devices", "platforms", "tags"
     )
     serializer_class = serializers.ValidatedSoftwareSerializer
     filterset_class = filtersets.ValidatedSoftwareFilterSet

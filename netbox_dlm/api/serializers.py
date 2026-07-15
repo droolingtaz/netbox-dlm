@@ -132,12 +132,13 @@ class ValidatedSoftwareSerializer(NetBoxModelSerializer):
     device_types = DeviceTypeSerializer(nested=True, many=True, required=False)
     device_roles = DeviceRoleSerializer(nested=True, many=True, required=False)
     devices = DeviceSerializer(nested=True, many=True, required=False)
+    platforms = PlatformSerializer(nested=True, many=True, required=False)
 
     class Meta:
         model = ValidatedSoftware
         fields = (
             "id", "url", "display", "software_version", "device_types",
-            "device_roles", "devices", "start", "end", "preferred",
+            "device_roles", "devices", "platforms", "start", "end", "preferred",
             "comments", "tags", "custom_fields", "created", "last_updated",
         )
 

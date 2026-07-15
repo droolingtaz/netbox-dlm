@@ -124,6 +124,9 @@ class ValidatedSoftwareFilterSet(NetBoxModelFilterSet):
     device_role_id = django_filters.ModelMultipleChoiceFilter(
         field_name="device_roles", queryset=DeviceRole.objects.all()
     )
+    platform_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="platforms", queryset=Platform.objects.all()
+    )
     preferred = django_filters.BooleanFilter()
 
     class Meta:

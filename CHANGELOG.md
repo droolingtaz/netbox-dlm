@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-07-15
+
+### Added
+
+- `ValidatedSoftware` rules can now be scoped to a `Platform`, in addition
+  to the existing device type / device role / specific device scoping.
+  A device's platform is checked by `covers_device()` alongside its other
+  scope dimensions, and is exposed in the edit form, filters, REST API,
+  and the rule's detail page.
+
 ## [0.3.3] - 2026-07-15
 
 ### Added

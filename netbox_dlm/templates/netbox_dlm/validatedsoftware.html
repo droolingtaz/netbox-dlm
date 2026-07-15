@@ -23,7 +23,7 @@
 </div>
 
 <div class="row mb-3">
-  <div class="col col-md-4">
+  <div class="col col-md-3">
     <div class="card">
       <h5 class="card-header">Device Types</h5>
       <ul class="list-group list-group-flush">
@@ -32,7 +32,7 @@
       </ul>
     </div>
   </div>
-  <div class="col col-md-4">
+  <div class="col col-md-3">
     <div class="card">
       <h5 class="card-header">Device Roles</h5>
       <ul class="list-group list-group-flush">
@@ -41,7 +41,16 @@
       </ul>
     </div>
   </div>
-  <div class="col col-md-4">
+  <div class="col col-md-3">
+    <div class="card">
+      <h5 class="card-header">Platforms</h5>
+      <ul class="list-group list-group-flush">
+        {% for platform in object.platforms.all %}<li class="list-group-item">{{ platform|linkify }}</li>
+        {% empty %}<li class="list-group-item text-muted">None</li>{% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="col col-md-3">
     <div class="card">
       <h5 class="card-header">Specific Devices</h5>
       <ul class="list-group list-group-flush">

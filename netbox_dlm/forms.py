@@ -188,17 +188,18 @@ class ValidatedSoftwareForm(NetBoxModelForm):
     device_types = DynamicModelMultipleChoiceField(queryset=DeviceType.objects.all(), required=False)
     device_roles = DynamicModelMultipleChoiceField(queryset=DeviceRole.objects.all(), required=False)
     devices = DynamicModelMultipleChoiceField(queryset=Device.objects.all(), required=False)
+    platforms = DynamicModelMultipleChoiceField(queryset=Platform.objects.all(), required=False)
     comments = CommentField()
 
     fieldsets = (
         FieldSet("software_version", "start", "end", "preferred", name="Rule"),
-        FieldSet("device_types", "device_roles", "devices", name="Scope"),
+        FieldSet("device_types", "device_roles", "devices", "platforms", name="Scope"),
     )
 
     class Meta:
         model = ValidatedSoftware
         fields = (
-            "software_version", "device_types", "device_roles", "devices",
+            "software_version", "device_types", "device_roles", "devices", "platforms",
             "start", "end", "preferred", "comments", "tags",
         )
         widgets = {
@@ -214,6 +215,7 @@ class ValidatedSoftwareFilterForm(NetBoxModelFilterSetForm):
     )
     device_type_id = DynamicModelMultipleChoiceField(queryset=DeviceType.objects.all(), required=False)
     device_role_id = DynamicModelMultipleChoiceField(queryset=DeviceRole.objects.all(), required=False)
+    platform_id = DynamicModelMultipleChoiceField(queryset=Platform.objects.all(), required=False)
     preferred = forms.NullBooleanField(
         required=False, widget=forms.Select(choices=[("", "---"), ("true", "Yes"), ("false", "No")])
     )

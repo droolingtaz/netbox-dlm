@@ -272,6 +272,7 @@ class ValidatedSoftware(NetBoxModel):
     device_types = models.ManyToManyField(to=DeviceType, related_name="+", blank=True)
     device_roles = models.ManyToManyField(to=DeviceRole, related_name="+", blank=True)
     devices = models.ManyToManyField(to=Device, related_name="+", blank=True)
+    platforms = models.ManyToManyField(to=Platform, related_name="+", blank=True)
     start = models.DateField()
     end = models.DateField(blank=True, null=True)
     preferred = models.BooleanField(
@@ -312,8 +313,15 @@ class ValidatedSoftware(NetBoxModel):
             return True
         if device.role_id and self.device_roles.filter(pk=device.role_id).exists():
             return True
+        if device.platform_id and self.platforms.filter(pk=device.platform_id).exists():
+            return True
         # A rule with no scope at all applies to every device running that software.
-        return not (self.devices.exists() or self.device_types.exists() or self.device_roles.exists())
+        return not (
+            self.devices.exists()
+            or self.device_types.exists()
+            or self.device_roles.exists()
+            or self.platforms.exists()
+        )
 
 
 # -----------------------------------------------------------------------------

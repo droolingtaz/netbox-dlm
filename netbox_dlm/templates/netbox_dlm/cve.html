@@ -1,5 +1,6 @@
 {% extends 'generic/object.html' %}
 {% load helpers %}
+{% load render_table from django_tables2 %}
 
 {% block content %}
 <div class="row mb-3">
@@ -58,23 +59,9 @@
 <div class="row mb-3">
   <div class="col col-md-12">
     <div class="card">
-      <h5 class="card-header">Vulnerability Instances ({{ vulnerabilities.count }})</h5>
-      <table class="table table-hover mb-0">
-        <thead>
-          <tr><th>Software Version</th><th>Device</th><th>Status</th></tr>
-        </thead>
-        <tbody>
-          {% for v in vulnerabilities %}
-          <tr>
-            <td>{{ v.software_version|linkify }}</td>
-            <td>{{ v.device|linkify|placeholder }}</td>
-            <td>{{ v.get_status_display }}</td>
-          </tr>
-          {% empty %}
-          <tr><td colspan="3" class="text-muted">None</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
+      <h5 class="card-header">Vulnerability Instances ({{ vulnerabilities_table.paginator.count }})</h5>
+      {% render_table vulnerabilities_table 'inc/table.html' %}
+      {% include 'inc/paginator.html' with table=vulnerabilities_table paginator=vulnerabilities_table.paginator page=vulnerabilities_table.page %}
     </div>
   </div>
 </div>

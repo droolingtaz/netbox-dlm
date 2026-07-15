@@ -248,7 +248,11 @@ class CVEView(generic.ObjectView):
     queryset = CVE.objects.all()
 
     def get_extra_context(self, request, instance):
-        return {"vulnerabilities": instance.vulnerabilities.all()}
+        vulnerabilities_table = tables.VulnerabilityTable(
+            instance.vulnerabilities.all(), exclude=("cve",)
+        )
+        vulnerabilities_table.configure(request)
+        return {"vulnerabilities_table": vulnerabilities_table}
 
 
 class CVEEditView(generic.ObjectEditView):

@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-07-15
+
+### Added
+
+- `requirements.txt` mirroring `pyproject.toml`'s runtime dependencies, for
+  `pip install -r requirements.txt`.
+
+### Changed
+
+- The CVE detail view's "Vulnerability Instances" panel now renders through
+  the existing `VulnerabilityTable`/`RequestConfig` machinery instead of a
+  raw HTML loop, so it paginates instead of listing every instance on one
+  page.
+
 ## [0.3.2] - 2026-07-13
 
 ### Security

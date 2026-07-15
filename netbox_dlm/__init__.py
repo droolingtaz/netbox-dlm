@@ -9,7 +9,7 @@ class DeviceLifecycleConfig(PluginConfig):
         "validated-software compliance, CVE/vulnerability exposure, and maintenance "
         "contracts — modeled after Nautobot's Device Lifecycle Management app."
     )
-    version = "0.4.0"
+    version = "0.4.1"
     base_url = "device-lifecycle"
     min_version = "4.1.0"
     default_settings = {

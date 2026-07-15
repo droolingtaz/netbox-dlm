@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-07-15
+
+### Fixed
+
+- The 0.4.0 release baked the new `ValidatedSoftware.platforms` field
+  directly into `0001_initial.py` instead of adding an incremental
+  migration. Django tracks applied migrations by `(app, name)`, not file
+  content, so any install that had already run `0001_initial` (i.e. every
+  existing install) silently skipped it on upgrade, leaving the `platforms`
+  column missing while the code already referenced it — breaking the
+  `ValidatedSoftware` list/edit views with a `ProgrammingError`. Reverted
+  `0001_initial.py` to its original content and added a real
+  `0002_validatedsoftware_platforms.py` migration. **If you installed 0.4.0,
+  upgrade to 0.4.1 and run `python manage.py migrate` again.**
+
 ## [0.4.0] - 2026-07-15
 
 ### Added

@@ -37,17 +37,25 @@ referencing a model field that silently resolves to nothing at render time.
   version is actually running in production — a mismatch means the template
   checks pass against a NetBox that doesn't match reality. Delete `.dev/` to
   force a re-clone after bumping it.
-- **Shipped migration tracks the NetBox version pin**: `netbox_dlm/migrations/0001_initial.py`
-  was generated against NetBox v4.6.4 (see README's Installation section).
-  If you change a model or bump the NetBox version pin, regenerate it —
-  `makemigrations` needs a real NetBox checkout with the plugin importable;
-  the same `.dev/netbox-src` + `.dev/venv` used by `test-templates.sh` works
-  for this (add the plugin to `PLUGINS` in its `configuration.py` and set
-  `DEVELOPER = True`, since NetBox's `makemigrations` command refuses to run
-  otherwise). Field/constraint behavior on NetBox's core models
-  (`dcim.Device`, `dcim.Platform`, etc.) is sensitive to NetBox version, so
-  always verify the regenerated migration against the version actually
-  running in production before shipping it.
+- **Never edit `0001_initial.py` (or any already-released migration) once it has shipped
+  in a PyPI release.** Django's `migrate` tracks applied migrations by
+  `(app, name)` in the `django_migrations` table, not by file content —
+  changing what an already-applied migration *contains* does nothing for
+  anyone upgrading an existing install; Django sees the name already marked
+  applied and skips it silently. (This is exactly what happened in 0.4.0:
+  `platforms` was baked into a regenerated `0001_initial.py`, so every
+  upgrading install just... never got the column.) For a model change,
+  always add a new incremental migration (`0002_...`, `0003_...`, etc.)
+  instead — `makemigrations` needs a real NetBox checkout with the plugin
+  importable; the same `.dev/netbox-src` + `.dev/venv` used by
+  `test-templates.sh` works for this (add the plugin to `PLUGINS` in its
+  `configuration.py` and set `DEVELOPER = True`, since NetBox's
+  `makemigrations` command refuses to run otherwise). Field/constraint
+  behavior on NetBox's core models (`dcim.Device`, `dcim.Platform`, etc.) is
+  sensitive to NetBox version, so always verify the generated migration
+  against the version actually running in production before shipping it.
+  Regenerating `0001_initial.py` in place is only ever safe pre-release,
+  before any tagged version depending on it exists.
 - **CI's package-build-sanity job runs from `/tmp`** (see
   `.github/workflows/test.yml`) specifically so `import netbox_dlm` resolves
   to the *installed wheel*, not this checkout's source tree. If you touch

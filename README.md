@@ -109,10 +109,12 @@ netbox_dlm/
   contract covers (`Contract.devices` M2M).
 - **Hardware Notices** — one row per `DeviceType` *or* `ModuleType` (not
   both — enforced in `clean()`), with EoS/EoL/EoSecurity/EoSW dates.
-- **Software Versions / Images** — per `Platform`. `DeviceSoftware` is a
-  1:1 to `Device` recording what's actually running (populate this from your
-  existing sync tooling — e.g. alongside `aci_netbox_sync` runs, or a Golden
-  Config compliance pass).
+- **Software Versions / Images** — per `Platform`. `SoftwareVersion.release_designation`
+  optionally marks a version as N-1/N/N+1 in that platform's release train (at
+  most one version per platform per designation, enforced by a DB constraint).
+  `DeviceSoftware` is a 1:1 to `Device` recording what's actually running
+  (populate this from your existing sync tooling — e.g. alongside
+  `aci_netbox_sync` runs, or a Golden Config compliance pass).
 - **Validated Software** — approval rules scoped by `device_types`,
   `device_roles`, and/or specific `devices` (M2M). A rule
   with no scope at all applies to any device running that software version.

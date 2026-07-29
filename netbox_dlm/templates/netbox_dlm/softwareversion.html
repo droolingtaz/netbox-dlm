@@ -35,6 +35,16 @@
           <td>{% checkmark object.long_term_support %}</td>
         </tr>
         <tr>
+          <th scope="row">Release designation</th>
+          <td>
+            {% if object.release_designation %}
+            <span class="badge text-bg-{{ object.get_release_designation_color }}">{{ object.get_release_designation_display }}</span>
+            {% else %}
+            {{ ''|placeholder }}
+            {% endif %}
+          </td>
+        </tr>
+        <tr>
           <th scope="row">Documentation</th>
           <td>{{ object.documentation_url|linkify|placeholder }}</td>
         </tr>

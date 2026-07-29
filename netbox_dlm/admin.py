@@ -34,8 +34,11 @@ class HardwareNoticeAdmin(admin.ModelAdmin):
 
 @admin.register(SoftwareVersion)
 class SoftwareVersionAdmin(admin.ModelAdmin):
-    list_display = ("__str__", "platform", "version", "release_date", "end_of_support", "long_term_support")
-    list_filter = ("platform", "long_term_support")
+    list_display = (
+        "__str__", "platform", "version", "release_date", "end_of_support",
+        "long_term_support", "release_designation",
+    )
+    list_filter = ("platform", "long_term_support", "release_designation")
     search_fields = ("version", "alias")
 
 

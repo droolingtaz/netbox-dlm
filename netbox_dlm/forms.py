@@ -10,6 +10,7 @@ from .choices import (
     CVESeverityChoices,
     CVEStatusChoices,
     HashingAlgorithmChoices,
+    ReleaseDesignationChoices,
     VulnerabilityStatusChoices,
 )
 from .models import (
@@ -127,7 +128,8 @@ class SoftwareVersionForm(NetBoxModelForm):
         model = SoftwareVersion
         fields = (
             "platform", "version", "alias", "release_date", "end_of_support",
-            "long_term_support", "documentation_url", "comments", "tags",
+            "long_term_support", "release_designation", "documentation_url",
+            "comments", "tags",
         )
         widgets = {
             "release_date": forms.DateInput(attrs={"type": "date"}),
@@ -140,6 +142,9 @@ class SoftwareVersionFilterForm(NetBoxModelFilterSetForm):
     platform_id = DynamicModelMultipleChoiceField(queryset=Platform.objects.all(), required=False)
     long_term_support = forms.NullBooleanField(
         required=False, widget=forms.Select(choices=[("", "---"), ("true", "Yes"), ("false", "No")])
+    )
+    release_designation = forms.MultipleChoiceField(
+        choices=ReleaseDesignationChoices, required=False
     )
 
 

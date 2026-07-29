@@ -8,6 +8,7 @@ from .choices import (
     ContractSupportLevelChoices,
     CVESeverityChoices,
     CVEStatusChoices,
+    ReleaseDesignationChoices,
     VulnerabilityStatusChoices,
 )
 from .models import (
@@ -72,10 +73,11 @@ class HardwareNoticeFilterSet(NetBoxModelFilterSet):
 class SoftwareVersionFilterSet(NetBoxModelFilterSet):
     platform_id = django_filters.ModelMultipleChoiceFilter(queryset=Platform.objects.all())
     long_term_support = django_filters.BooleanFilter()
+    release_designation = django_filters.MultipleChoiceFilter(choices=ReleaseDesignationChoices)
 
     class Meta:
         model = SoftwareVersion
-        fields = ("id", "platform_id", "version", "long_term_support")
+        fields = ("id", "platform_id", "version", "long_term_support", "release_designation")
 
     def search(self, queryset, name, value):
         if not value.strip():

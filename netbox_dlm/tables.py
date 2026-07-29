@@ -75,6 +75,7 @@ class SoftwareVersionTable(NetBoxTable):
     display = tables.Column(linkify=True, verbose_name="Software Version")
     platform = tables.Column(linkify=True)
     long_term_support = columns.BooleanColumn(verbose_name="LTS")
+    release_designation = columns.ChoiceFieldColumn(verbose_name="Release Designation")
     device_count = tables.Column(verbose_name="Devices")
     tags = columns.TagColumn()
 
@@ -82,11 +83,12 @@ class SoftwareVersionTable(NetBoxTable):
         model = SoftwareVersion
         fields = (
             "pk", "id", "display", "platform", "version", "release_date",
-            "end_of_support", "long_term_support", "documentation_url", "device_count", "tags",
+            "end_of_support", "long_term_support", "release_designation",
+            "documentation_url", "device_count", "tags",
         )
         default_columns = (
             "display", "platform", "version", "release_date",
-            "end_of_support", "long_term_support", "device_count",
+            "end_of_support", "long_term_support", "release_designation", "device_count",
         )
 
 

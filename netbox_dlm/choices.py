@@ -17,6 +17,20 @@ class HashingAlgorithmChoices(ChoiceSet):
     ]
 
 
+class ReleaseDesignationChoices(ChoiceSet):
+    key = "SoftwareVersion.release_designation"
+
+    N_MINUS_1 = "n_minus_1"
+    N = "n"
+    N_PLUS_1 = "n_plus_1"
+
+    CHOICES = [
+        (N_MINUS_1, "N-1 (previous)", "blue"),
+        (N, "N (current)", "green"),
+        (N_PLUS_1, "N+1 (candidate)", "orange"),
+    ]
+
+
 class ContractSupportLevelChoices(ChoiceSet):
     key = "Contract.support_level"
 

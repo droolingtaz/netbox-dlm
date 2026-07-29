@@ -14,6 +14,7 @@ from ..choices import (
     CVESeverityChoices,
     CVEStatusChoices,
     HashingAlgorithmChoices,
+    ReleaseDesignationChoices,
     VulnerabilityStatusChoices,
 )
 from ..models import (
@@ -82,12 +83,13 @@ class SoftwareVersionSerializer(NetBoxModelSerializer):
         view_name="plugins-api:netbox_dlm-api:softwareversion-detail"
     )
     platform = PlatformSerializer(nested=True)
+    release_designation = ChoiceField(choices=ReleaseDesignationChoices, required=False)
 
     class Meta:
         model = SoftwareVersion
         fields = (
             "id", "url", "display", "platform", "version", "alias",
-            "release_date", "end_of_support", "long_term_support",
+            "release_date", "end_of_support", "long_term_support", "release_designation",
             "documentation_url", "comments", "tags", "custom_fields",
             "created", "last_updated",
         )

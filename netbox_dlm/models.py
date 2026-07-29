@@ -13,6 +13,7 @@ from .choices import (
     CVESeverityChoices,
     CVEStatusChoices,
     HashingAlgorithmChoices,
+    ReleaseDesignationChoices,
     VulnerabilityStatusChoices,
 )
 
@@ -177,6 +178,16 @@ class SoftwareVersion(NetBoxModel):
     release_date = models.DateField(blank=True, null=True)
     end_of_support = models.DateField(blank=True, null=True, verbose_name="End of software support")
     long_term_support = models.BooleanField(default=False, verbose_name="LTS")
+    release_designation = models.CharField(
+        max_length=10,
+        choices=ReleaseDesignationChoices,
+        blank=True,
+        verbose_name="Release designation",
+        help_text=(
+            "This version's position in the platform's release train. "
+            "At most one version per platform may hold a given designation."
+        ),
+    )
     documentation_url = models.URLField(blank=True)
     comments = models.TextField(blank=True)
 
@@ -185,7 +196,12 @@ class SoftwareVersion(NetBoxModel):
         constraints = [
             models.UniqueConstraint(
                 fields=("platform", "version"), name="%(app_label)s_%(class)s_unique_platform_version"
-            )
+            ),
+            models.UniqueConstraint(
+                fields=("platform", "release_designation"),
+                condition=~models.Q(release_designation=""),
+                name="%(app_label)s_%(class)s_unique_platform_release_designation",
+            ),
         ]
 
     def __str__(self):
@@ -197,6 +213,9 @@ class SoftwareVersion(NetBoxModel):
 
     def get_absolute_url(self):
         return reverse("plugins:netbox_dlm:softwareversion", args=[self.pk])
+
+    def get_release_designation_color(self):
+        return ReleaseDesignationChoices.colors.get(self.release_designation)
 
     @property
     def end_of_support_passed(self):

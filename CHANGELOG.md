@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-07-29
+
+### Added
+
+- `SoftwareVersion.release_designation` marks a version's position in its
+  platform's release train (`N-1` / `N` / `N+1`), enforced so at most one
+  version per platform can hold a given designation. Exposed in the edit
+  form, filters, table, admin, and REST API.
+
 ## [0.4.1] - 2026-07-15
 
 ### Fixed
@@ -100,7 +109,11 @@ Initial release.
 - Packaging, CI (package-build sanity + template-compile checks), and PyPI
   release workflow.
 
-[Unreleased]: https://github.com/droolingtaz/netbox-dlm/compare/v0.3.2...HEAD
+[Unreleased]: https://github.com/droolingtaz/netbox-dlm/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.5.0
+[0.4.1]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.4.1
+[0.4.0]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.4.0
+[0.3.3]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.3.3
 [0.3.2]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.3.2
 [0.3.1]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.3.1
 [0.3.0]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.3.0

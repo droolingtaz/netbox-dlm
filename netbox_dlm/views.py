@@ -8,6 +8,8 @@ from .models import (
     Contract,
     DeviceSoftware,
     HardwareNotice,
+    InventoryItemRolePlatform,
+    InventoryItemSoftware,
     Provider,
     SoftwareImageFile,
     SoftwareVersion,
@@ -201,6 +203,66 @@ class DeviceSoftwareBulkDeleteView(generic.BulkDeleteView):
     queryset = DeviceSoftware.objects.all()
     table = tables.DeviceSoftwareTable
     filterset = filtersets.DeviceSoftwareFilterSet
+
+
+# -----------------------------------------------------------------------------
+# InventoryItemRolePlatform
+# -----------------------------------------------------------------------------
+
+class InventoryItemRolePlatformListView(generic.ObjectListView):
+    queryset = InventoryItemRolePlatform.objects.all()
+    table = tables.InventoryItemRolePlatformTable
+    filterset = filtersets.InventoryItemRolePlatformFilterSet
+    filterset_form = forms.InventoryItemRolePlatformFilterForm
+
+
+class InventoryItemRolePlatformView(generic.ObjectView):
+    queryset = InventoryItemRolePlatform.objects.all()
+
+
+class InventoryItemRolePlatformEditView(generic.ObjectEditView):
+    queryset = InventoryItemRolePlatform.objects.all()
+    form = forms.InventoryItemRolePlatformForm
+
+
+class InventoryItemRolePlatformDeleteView(generic.ObjectDeleteView):
+    queryset = InventoryItemRolePlatform.objects.all()
+
+
+class InventoryItemRolePlatformBulkDeleteView(generic.BulkDeleteView):
+    queryset = InventoryItemRolePlatform.objects.all()
+    table = tables.InventoryItemRolePlatformTable
+    filterset = filtersets.InventoryItemRolePlatformFilterSet
+
+
+# -----------------------------------------------------------------------------
+# InventoryItemSoftware
+# -----------------------------------------------------------------------------
+
+class InventoryItemSoftwareListView(generic.ObjectListView):
+    queryset = InventoryItemSoftware.objects.all()
+    table = tables.InventoryItemSoftwareTable
+    filterset = filtersets.InventoryItemSoftwareFilterSet
+    filterset_form = forms.InventoryItemSoftwareFilterForm
+
+
+class InventoryItemSoftwareView(generic.ObjectView):
+    queryset = InventoryItemSoftware.objects.all()
+
+
+class InventoryItemSoftwareEditView(generic.ObjectEditView):
+    queryset = InventoryItemSoftware.objects.all()
+    form = forms.InventoryItemSoftwareForm
+
+
+class InventoryItemSoftwareDeleteView(generic.ObjectDeleteView):
+    queryset = InventoryItemSoftware.objects.all()
+
+
+class InventoryItemSoftwareBulkDeleteView(generic.BulkDeleteView):
+    queryset = InventoryItemSoftware.objects.all()
+    table = tables.InventoryItemSoftwareTable
+    filterset = filtersets.InventoryItemSoftwareFilterSet
 
 
 # -----------------------------------------------------------------------------

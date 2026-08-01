@@ -45,6 +45,20 @@ class DeviceSoftwareType(NetBoxObjectType):
         filterset_class = filtersets.DeviceSoftwareFilterSet
 
 
+class InventoryItemRolePlatformType(NetBoxObjectType):
+    class Meta:
+        model = models.InventoryItemRolePlatform
+        fields = "__all__"
+        filterset_class = filtersets.InventoryItemRolePlatformFilterSet
+
+
+class InventoryItemSoftwareType(NetBoxObjectType):
+    class Meta:
+        model = models.InventoryItemSoftware
+        fields = "__all__"
+        filterset_class = filtersets.InventoryItemSoftwareFilterSet
+
+
 class ValidatedSoftwareType(NetBoxObjectType):
     class Meta:
         model = models.ValidatedSoftware

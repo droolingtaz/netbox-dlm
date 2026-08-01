@@ -26,6 +26,12 @@ class DeviceLifecycleQuery:
     device_software: types.DeviceSoftwareType = strawberry_django.field()
     device_software_list: List[types.DeviceSoftwareType] = strawberry_django.field()
 
+    inventory_item_role_platform: types.InventoryItemRolePlatformType = strawberry_django.field()
+    inventory_item_role_platform_list: List[types.InventoryItemRolePlatformType] = strawberry_django.field()
+
+    inventory_item_software: types.InventoryItemSoftwareType = strawberry_django.field()
+    inventory_item_software_list: List[types.InventoryItemSoftwareType] = strawberry_django.field()
+
     validated_software: types.ValidatedSoftwareType = strawberry_django.field()
     validated_software_list: List[types.ValidatedSoftwareType] = strawberry_django.field()
 

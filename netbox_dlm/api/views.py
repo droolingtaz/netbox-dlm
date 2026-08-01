@@ -6,6 +6,8 @@ from ..models import (
     Contract,
     DeviceSoftware,
     HardwareNotice,
+    InventoryItemRolePlatform,
+    InventoryItemSoftware,
     Provider,
     SoftwareImageFile,
     SoftwareVersion,
@@ -51,9 +53,24 @@ class DeviceSoftwareViewSet(NetBoxModelViewSet):
     filterset_class = filtersets.DeviceSoftwareFilterSet
 
 
+class InventoryItemRolePlatformViewSet(NetBoxModelViewSet):
+    queryset = InventoryItemRolePlatform.objects.prefetch_related("role", "platform", "tags")
+    serializer_class = serializers.InventoryItemRolePlatformSerializer
+    filterset_class = filtersets.InventoryItemRolePlatformFilterSet
+
+
+class InventoryItemSoftwareViewSet(NetBoxModelViewSet):
+    queryset = InventoryItemSoftware.objects.prefetch_related(
+        "inventory_item", "software_version", "tags"
+    )
+    serializer_class = serializers.InventoryItemSoftwareSerializer
+    filterset_class = filtersets.InventoryItemSoftwareFilterSet
+
+
 class ValidatedSoftwareViewSet(NetBoxModelViewSet):
     queryset = ValidatedSoftware.objects.prefetch_related(
-        "software_version", "device_types", "device_roles", "devices", "platforms", "tags"
+        "software_version", "device_types", "device_roles", "devices", "platforms",
+        "inventory_item_roles", "tags",
     )
     serializer_class = serializers.ValidatedSoftwareSerializer
     filterset_class = filtersets.ValidatedSoftwareFilterSet
@@ -66,6 +83,8 @@ class CVEViewSet(NetBoxModelViewSet):
 
 
 class VulnerabilityViewSet(NetBoxModelViewSet):
-    queryset = Vulnerability.objects.prefetch_related("cve", "software_version", "device", "tags")
+    queryset = Vulnerability.objects.prefetch_related(
+        "cve", "software_version", "device", "inventory_item", "tags"
+    )
     serializer_class = serializers.VulnerabilitySerializer
     filterset_class = filtersets.VulnerabilityFilterSet

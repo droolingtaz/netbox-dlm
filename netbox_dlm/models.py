@@ -5,7 +5,15 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 
-from dcim.models import Device, DeviceType, ModuleType, Platform, DeviceRole
+from dcim.models import (
+    Device,
+    DeviceRole,
+    DeviceType,
+    InventoryItem,
+    InventoryItemRole,
+    ModuleType,
+    Platform,
+)
 from netbox.models import NetBoxModel
 
 from .choices import (
@@ -278,11 +286,84 @@ class DeviceSoftware(NetBoxModel):
         return reverse("plugins:netbox_dlm:devicesoftware", args=[self.pk])
 
 
+class InventoryItemRolePlatform(NetBoxModel):
+    """
+    Declares which Platform's SoftwareVersions apply to InventoryItems of a
+    given InventoryItemRole (e.g. "Management Controller" -> "Cisco CIMC").
+
+    InventoryItem has no platform field of its own, unlike Device, so this
+    mapping is what lets InventoryItemSoftware narrow/validate its
+    SoftwareVersion choice the same way DeviceSoftware can rely on
+    device.platform.
+    """
+
+    role = models.OneToOneField(
+        to=InventoryItemRole, on_delete=models.CASCADE, related_name="lifecycle_platform"
+    )
+    platform = models.ForeignKey(
+        to=Platform, on_delete=models.PROTECT, related_name="+"
+    )
+    comments = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ("role",)
+        verbose_name = "Inventory item role platform"
+        verbose_name_plural = "Inventory item role platforms"
+
+    def __str__(self):
+        return f"{self.role} → {self.platform}"
+
+    def get_absolute_url(self):
+        return reverse("plugins:netbox_dlm:inventoryitemroleplatform", args=[self.pk])
+
+
+class InventoryItemSoftware(NetBoxModel):
+    """Tracks which SoftwareVersion is currently running on a given InventoryItem."""
+
+    inventory_item = models.OneToOneField(
+        to=InventoryItem, on_delete=models.CASCADE, related_name="lifecycle_software"
+    )
+    software_version = models.ForeignKey(
+        to=SoftwareVersion, on_delete=models.PROTECT, related_name="inventory_items_running"
+    )
+    last_checked = models.DateTimeField(blank=True, null=True)
+    comments = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ("inventory_item",)
+        verbose_name = "Inventory item software"
+        verbose_name_plural = "Inventory item software"
+
+    def __str__(self):
+        return f"{self.inventory_item}: {self.software_version}"
+
+    def get_absolute_url(self):
+        return reverse("plugins:netbox_dlm:inventoryitemsoftware", args=[self.pk])
+
+    def clean(self):
+        super().clean()
+        if not (self.inventory_item_id and self.software_version_id):
+            return
+        role_id = self.inventory_item.role_id
+        if not role_id:
+            return
+        mapping = InventoryItemRolePlatform.objects.filter(role_id=role_id).first()
+        if mapping and self.software_version.platform_id != mapping.platform_id:
+            raise ValidationError(
+                {
+                    "software_version": (
+                        f"{self.inventory_item.role} inventory items require software "
+                        f"from the {mapping.platform} platform."
+                    )
+                }
+            )
+
+
 class ValidatedSoftware(NetBoxModel):
     """
     An organizationally-approved software rule: this SoftwareVersion is valid
-    for the given scope (device types / roles / specific devices / platforms)
-    during the given date range.
+    for the given scope (device types / roles / specific devices / platforms /
+    inventory item roles) during the given date range.
     """
 
     software_version = models.ForeignKey(
@@ -292,6 +373,9 @@ class ValidatedSoftware(NetBoxModel):
     device_roles = models.ManyToManyField(to=DeviceRole, related_name="+", blank=True)
     devices = models.ManyToManyField(to=Device, related_name="+", blank=True)
     platforms = models.ManyToManyField(to=Platform, related_name="+", blank=True)
+    inventory_item_roles = models.ManyToManyField(
+        to=InventoryItemRole, related_name="+", blank=True
+    )
     start = models.DateField()
     end = models.DateField(blank=True, null=True)
     preferred = models.BooleanField(
@@ -340,6 +424,24 @@ class ValidatedSoftware(NetBoxModel):
             or self.device_types.exists()
             or self.device_roles.exists()
             or self.platforms.exists()
+            or self.inventory_item_roles.exists()
+        )
+
+    def covers_inventory_item(self, item):
+        """Whether this rule's scope includes the given InventoryItem."""
+        if item.role_id and self.inventory_item_roles.filter(pk=item.role_id).exists():
+            return True
+        if item.role_id:
+            mapping = InventoryItemRolePlatform.objects.filter(role_id=item.role_id).first()
+            if mapping and self.platforms.filter(pk=mapping.platform_id).exists():
+                return True
+        # A rule with no scope at all applies to every inventory item running that software.
+        return not (
+            self.devices.exists()
+            or self.device_types.exists()
+            or self.device_roles.exists()
+            or self.platforms.exists()
+            or self.inventory_item_roles.exists()
         )
 
 
@@ -382,7 +484,7 @@ class CVE(NetBoxModel):
 class Vulnerability(NetBoxModel):
     """
     A specific instance of exposure: a CVE affecting a SoftwareVersion,
-    optionally scoped down to a single Device.
+    optionally scoped down to a single Device or InventoryItem.
     """
 
     cve = models.ForeignKey(to=CVE, on_delete=models.CASCADE, related_name="vulnerabilities")
@@ -396,24 +498,38 @@ class Vulnerability(NetBoxModel):
         blank=True,
         null=True,
     )
+    inventory_item = models.ForeignKey(
+        to=InventoryItem,
+        on_delete=models.CASCADE,
+        related_name="vulnerabilities",
+        blank=True,
+        null=True,
+    )
     status = models.CharField(
         max_length=20, choices=VulnerabilityStatusChoices, default=VulnerabilityStatusChoices.OPEN
     )
     comments = models.TextField(blank=True)
 
     class Meta:
-        ordering = ("cve", "software_version", "device")
+        ordering = ("cve", "software_version", "device", "inventory_item")
         verbose_name_plural = "Vulnerabilities"
         constraints = [
             models.UniqueConstraint(
-                fields=("cve", "software_version", "device"),
+                fields=("cve", "software_version", "device", "inventory_item"),
                 name="%(app_label)s_%(class)s_unique_cve_software_device",
             )
         ]
 
     def __str__(self):
-        scope = self.device or self.software_version
+        scope = self.device or self.inventory_item or self.software_version
         return f"{self.cve} @ {scope}"
 
     def get_absolute_url(self):
         return reverse("plugins:netbox_dlm:vulnerability", args=[self.pk])
+
+    def clean(self):
+        super().clean()
+        if self.device_id and self.inventory_item_id:
+            raise ValidationError(
+                "Set at most one of device or inventory item, not both."
+            )

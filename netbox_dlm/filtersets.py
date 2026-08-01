@@ -1,7 +1,15 @@
 import django_filters
 from django.db.models import Q
 
-from dcim.models import Device, DeviceRole, DeviceType, ModuleType, Platform
+from dcim.models import (
+    Device,
+    DeviceRole,
+    DeviceType,
+    InventoryItem,
+    InventoryItemRole,
+    ModuleType,
+    Platform,
+)
 from netbox.filtersets import NetBoxModelFilterSet
 
 from .choices import (
@@ -16,6 +24,8 @@ from .models import (
     Contract,
     DeviceSoftware,
     HardwareNotice,
+    InventoryItemRolePlatform,
+    InventoryItemSoftware,
     Provider,
     SoftwareImageFile,
     SoftwareVersion,
@@ -74,6 +84,9 @@ class SoftwareVersionFilterSet(NetBoxModelFilterSet):
     platform_id = django_filters.ModelMultipleChoiceFilter(queryset=Platform.objects.all())
     long_term_support = django_filters.BooleanFilter()
     release_designation = django_filters.MultipleChoiceFilter(choices=ReleaseDesignationChoices)
+    inventory_item_id = django_filters.ModelChoiceFilter(
+        queryset=InventoryItem.objects.all(), method="filter_inventory_item"
+    )
 
     class Meta:
         model = SoftwareVersion
@@ -83,6 +96,19 @@ class SoftwareVersionFilterSet(NetBoxModelFilterSet):
         if not value.strip():
             return queryset
         return queryset.filter(Q(version__icontains=value) | Q(alias__icontains=value))
+
+    def filter_inventory_item(self, queryset, name, value):
+        """
+        Narrows results to the Platform mapped (via InventoryItemRolePlatform)
+        to the given InventoryItem's role. No-op if the item has no role or
+        no mapping exists, so callers without a mapping see every version.
+        """
+        if not value.role_id:
+            return queryset
+        mapping = InventoryItemRolePlatform.objects.filter(role_id=value.role_id).first()
+        if not mapping:
+            return queryset
+        return queryset.filter(platform_id=mapping.platform_id)
 
 
 class SoftwareImageFileFilterSet(NetBoxModelFilterSet):
@@ -116,6 +142,34 @@ class DeviceSoftwareFilterSet(NetBoxModelFilterSet):
         return queryset.filter(Q(device__name__icontains=value))
 
 
+class InventoryItemRolePlatformFilterSet(NetBoxModelFilterSet):
+    role_id = django_filters.ModelMultipleChoiceFilter(queryset=InventoryItemRole.objects.all())
+    platform_id = django_filters.ModelMultipleChoiceFilter(queryset=Platform.objects.all())
+
+    class Meta:
+        model = InventoryItemRolePlatform
+        fields = ("id", "role_id", "platform_id")
+
+    def search(self, queryset, name, value):
+        return queryset
+
+
+class InventoryItemSoftwareFilterSet(NetBoxModelFilterSet):
+    inventory_item_id = django_filters.ModelMultipleChoiceFilter(queryset=InventoryItem.objects.all())
+    software_version_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=SoftwareVersion.objects.all()
+    )
+
+    class Meta:
+        model = InventoryItemSoftware
+        fields = ("id", "inventory_item_id", "software_version_id")
+
+    def search(self, queryset, name, value):
+        if not value.strip():
+            return queryset
+        return queryset.filter(Q(inventory_item__name__icontains=value))
+
+
 class ValidatedSoftwareFilterSet(NetBoxModelFilterSet):
     software_version_id = django_filters.ModelMultipleChoiceFilter(
         queryset=SoftwareVersion.objects.all()
@@ -128,6 +182,9 @@ class ValidatedSoftwareFilterSet(NetBoxModelFilterSet):
     )
     platform_id = django_filters.ModelMultipleChoiceFilter(
         field_name="platforms", queryset=Platform.objects.all()
+    )
+    inventory_item_role_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="inventory_item_roles", queryset=InventoryItemRole.objects.all()
     )
     preferred = django_filters.BooleanFilter()
 
@@ -161,6 +218,7 @@ class CVEFilterSet(NetBoxModelFilterSet):
 class VulnerabilityFilterSet(NetBoxModelFilterSet):
     cve_id = django_filters.ModelMultipleChoiceFilter(queryset=CVE.objects.all())
     device_id = django_filters.ModelMultipleChoiceFilter(queryset=Device.objects.all())
+    inventory_item_id = django_filters.ModelMultipleChoiceFilter(queryset=InventoryItem.objects.all())
     software_version_id = django_filters.ModelMultipleChoiceFilter(
         queryset=SoftwareVersion.objects.all()
     )
@@ -168,7 +226,7 @@ class VulnerabilityFilterSet(NetBoxModelFilterSet):
 
     class Meta:
         model = Vulnerability
-        fields = ("id", "cve_id", "device_id", "software_version_id", "status")
+        fields = ("id", "cve_id", "device_id", "inventory_item_id", "software_version_id", "status")
 
     def search(self, queryset, name, value):
         return queryset

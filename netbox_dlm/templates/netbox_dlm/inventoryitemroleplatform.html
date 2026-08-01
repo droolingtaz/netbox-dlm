@@ -1,0 +1,21 @@
+{% extends 'generic/object.html' %}
+{% load helpers %}
+
+{% block content %}
+<div class="row mb-3">
+  <div class="col col-md-6">
+    <div class="card">
+      <h5 class="card-header">Inventory Item Role Platform</h5>
+      <table class="table table-hover attr-table">
+        <tr><th scope="row">Inventory item role</th><td>{{ object.role|linkify }}</td></tr>
+        <tr><th scope="row">Platform</th><td>{{ object.platform|linkify }}</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="col col-md-6">
+    {% include 'inc/panels/custom_fields.html' %}
+    {% include 'inc/panels/tags.html' %}
+    {% include 'inc/panels/comments.html' %}
+  </div>
+</div>
+{% endblock %}

@@ -49,6 +49,28 @@ software_items = (
         ),
     ),
     PluginMenuItem(
+        link="plugins:netbox_dlm:inventoryitemsoftware_list",
+        link_text="Inventory Item Software",
+        buttons=(
+            PluginMenuButton(
+                link="plugins:netbox_dlm:inventoryitemsoftware_add",
+                title="Add",
+                icon_class="mdi mdi-plus-thick",
+            ),
+        ),
+    ),
+    PluginMenuItem(
+        link="plugins:netbox_dlm:inventoryitemroleplatform_list",
+        link_text="Inventory Item Role Platforms",
+        buttons=(
+            PluginMenuButton(
+                link="plugins:netbox_dlm:inventoryitemroleplatform_add",
+                title="Add",
+                icon_class="mdi mdi-plus-thick",
+            ),
+        ),
+    ),
+    PluginMenuItem(
         link="plugins:netbox_dlm:validatedsoftware_list",
         link_text="Validated Software",
         buttons=(

@@ -1,6 +1,14 @@
 from django import forms
 
-from dcim.models import Device, DeviceRole, DeviceType, ModuleType, Platform
+from dcim.models import (
+    Device,
+    DeviceRole,
+    DeviceType,
+    InventoryItem,
+    InventoryItemRole,
+    ModuleType,
+    Platform,
+)
 from netbox.forms import NetBoxModelForm, NetBoxModelFilterSetForm
 from utilities.forms.fields import CommentField, DynamicModelChoiceField, DynamicModelMultipleChoiceField
 from utilities.forms.rendering import FieldSet
@@ -18,6 +26,8 @@ from .models import (
     Contract,
     DeviceSoftware,
     HardwareNotice,
+    InventoryItemRolePlatform,
+    InventoryItemSoftware,
     Provider,
     SoftwareImageFile,
     SoftwareVersion,
@@ -188,24 +198,70 @@ class DeviceSoftwareFilterForm(NetBoxModelFilterSetForm):
     )
 
 
+class InventoryItemRolePlatformForm(NetBoxModelForm):
+    role = DynamicModelChoiceField(queryset=InventoryItemRole.objects.all())
+    platform = DynamicModelChoiceField(queryset=Platform.objects.all())
+    comments = CommentField()
+
+    class Meta:
+        model = InventoryItemRolePlatform
+        fields = ("role", "platform", "comments", "tags")
+
+
+class InventoryItemRolePlatformFilterForm(NetBoxModelFilterSetForm):
+    model = InventoryItemRolePlatform
+    role_id = DynamicModelMultipleChoiceField(queryset=InventoryItemRole.objects.all(), required=False)
+    platform_id = DynamicModelMultipleChoiceField(queryset=Platform.objects.all(), required=False)
+
+
+class InventoryItemSoftwareForm(NetBoxModelForm):
+    inventory_item = DynamicModelChoiceField(queryset=InventoryItem.objects.all())
+    software_version = DynamicModelChoiceField(
+        queryset=SoftwareVersion.objects.all(),
+        query_params={"inventory_item_id": "$inventory_item"},
+    )
+    comments = CommentField()
+
+    class Meta:
+        model = InventoryItemSoftware
+        fields = ("inventory_item", "software_version", "last_checked", "comments", "tags")
+        widgets = {
+            "last_checked": forms.DateTimeInput(attrs={"type": "datetime-local"}),
+        }
+
+
+class InventoryItemSoftwareFilterForm(NetBoxModelFilterSetForm):
+    model = InventoryItemSoftware
+    inventory_item_id = DynamicModelMultipleChoiceField(queryset=InventoryItem.objects.all(), required=False)
+    software_version_id = DynamicModelMultipleChoiceField(
+        queryset=SoftwareVersion.objects.all(), required=False
+    )
+
+
 class ValidatedSoftwareForm(NetBoxModelForm):
     software_version = DynamicModelChoiceField(queryset=SoftwareVersion.objects.all())
     device_types = DynamicModelMultipleChoiceField(queryset=DeviceType.objects.all(), required=False)
     device_roles = DynamicModelMultipleChoiceField(queryset=DeviceRole.objects.all(), required=False)
     devices = DynamicModelMultipleChoiceField(queryset=Device.objects.all(), required=False)
     platforms = DynamicModelMultipleChoiceField(queryset=Platform.objects.all(), required=False)
+    inventory_item_roles = DynamicModelMultipleChoiceField(
+        queryset=InventoryItemRole.objects.all(), required=False
+    )
     comments = CommentField()
 
     fieldsets = (
         FieldSet("software_version", "start", "end", "preferred", name="Rule"),
-        FieldSet("device_types", "device_roles", "devices", "platforms", name="Scope"),
+        FieldSet(
+            "device_types", "device_roles", "devices", "platforms", "inventory_item_roles",
+            name="Scope",
+        ),
     )
 
     class Meta:
         model = ValidatedSoftware
         fields = (
             "software_version", "device_types", "device_roles", "devices", "platforms",
-            "start", "end", "preferred", "comments", "tags",
+            "inventory_item_roles", "start", "end", "preferred", "comments", "tags",
         )
         widgets = {
             "start": forms.DateInput(attrs={"type": "date"}),
@@ -221,6 +277,9 @@ class ValidatedSoftwareFilterForm(NetBoxModelFilterSetForm):
     device_type_id = DynamicModelMultipleChoiceField(queryset=DeviceType.objects.all(), required=False)
     device_role_id = DynamicModelMultipleChoiceField(queryset=DeviceRole.objects.all(), required=False)
     platform_id = DynamicModelMultipleChoiceField(queryset=Platform.objects.all(), required=False)
+    inventory_item_role_id = DynamicModelMultipleChoiceField(
+        queryset=InventoryItemRole.objects.all(), required=False
+    )
     preferred = forms.NullBooleanField(
         required=False, widget=forms.Select(choices=[("", "---"), ("true", "Yes"), ("false", "No")])
     )
@@ -262,17 +321,29 @@ class VulnerabilityForm(NetBoxModelForm):
     cve = DynamicModelChoiceField(queryset=CVE.objects.all())
     software_version = DynamicModelChoiceField(queryset=SoftwareVersion.objects.all())
     device = DynamicModelChoiceField(queryset=Device.objects.all(), required=False)
+    inventory_item = DynamicModelChoiceField(queryset=InventoryItem.objects.all(), required=False)
     comments = CommentField()
 
     class Meta:
         model = Vulnerability
-        fields = ("cve", "software_version", "device", "status", "comments", "tags")
+        fields = (
+            "cve", "software_version", "device", "inventory_item", "status", "comments", "tags",
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if cleaned_data.get("device") and cleaned_data.get("inventory_item"):
+            raise forms.ValidationError(
+                "Set at most one of device or inventory item, not both."
+            )
+        return cleaned_data
 
 
 class VulnerabilityFilterForm(NetBoxModelFilterSetForm):
     model = Vulnerability
     cve_id = DynamicModelMultipleChoiceField(queryset=CVE.objects.all(), required=False)
     device_id = DynamicModelMultipleChoiceField(queryset=Device.objects.all(), required=False)
+    inventory_item_id = DynamicModelMultipleChoiceField(queryset=InventoryItem.objects.all(), required=False)
     software_version_id = DynamicModelMultipleChoiceField(
         queryset=SoftwareVersion.objects.all(), required=False
     )

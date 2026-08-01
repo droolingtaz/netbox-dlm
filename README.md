@@ -11,6 +11,10 @@ scoping that Custom Objects doesn't support well.
 - `SoftwareVersion` (per Platform)
 - `SoftwareImageFile`
 - `DeviceSoftware` — software actually running on a Device
+- `InventoryItemSoftware` — software actually running on an InventoryItem
+  (e.g. a Cisco CIMC or Dell iDRAC modeled as a legacy InventoryItem)
+- `InventoryItemRolePlatform` — maps an InventoryItemRole to the Platform
+  whose SoftwareVersions apply to it
 - `ValidatedSoftware` — approval rules
 - `Contract`
 - `Provider`
@@ -32,7 +36,8 @@ if you want historical trending of compliance over time.
 netbox_dlm/
 ├── __init__.py                          # PluginConfig
 ├── models.py                            # Provider, Contract, HardwareNotice, SoftwareVersion,
-│                                        # SoftwareImageFile, DeviceSoftware, ValidatedSoftware,
+│                                        # SoftwareImageFile, DeviceSoftware, InventoryItemSoftware,
+│                                        # InventoryItemRolePlatform, ValidatedSoftware,
 │                                        # CVE, Vulnerability
 ├── choices.py                           # ChoiceSets
 ├── admin.py                             # Django admin registrations
@@ -46,6 +51,7 @@ netbox_dlm/
 ├── scripts.py                           # CheckHardwareNotices, RunSoftwareValidation, SyncCVEs
 ├── templates/netbox_dlm/
 │   ├── device_lifecycle_panel.html
+│   ├── inventoryitem_lifecycle_panel.html
 │   └── devicetype_lifecycle_panel.html
 ├── api/
 │   ├── serializers.py
@@ -115,25 +121,39 @@ netbox_dlm/
   `DeviceSoftware` is a 1:1 to `Device` recording what's actually running
   (populate this from your existing sync tooling — e.g. alongside
   `aci_netbox_sync` runs, or a Golden Config compliance pass).
+  `InventoryItemSoftware` is the same idea for a `dcim.InventoryItem` — useful
+  for management controllers (Cisco CIMC, Dell iDRAC, HPE iLO, etc.) modeled
+  as inventory items rather than as their own `Device`. Since `InventoryItem`
+  has no `platform` field of its own, `InventoryItemRolePlatform` declares
+  which `Platform`'s `SoftwareVersion`s apply to a given `InventoryItemRole`
+  (e.g. "Management Controller" → a "Cisco CIMC" platform); once that mapping
+  exists, the `InventoryItemSoftware` add form narrows its version picker to
+  that platform, and `clean()` rejects a mismatched selection.
 - **Validated Software** — approval rules scoped by `device_types`,
-  `device_roles`, and/or specific `devices` (M2M). A rule
-  with no scope at all applies to any device running that software version.
-  `preferred=True` marks the target version for a given scope; `covers_device()`
-  and `valid_now` do the compliance-check heavy lifting.
+  `device_roles`, specific `devices`, `platforms`, and/or
+  `inventory_item_roles` (all M2M). A rule with no scope at all applies to
+  any device or inventory item running that software version.
+  `preferred=True` marks the target version for a given scope;
+  `covers_device()`/`covers_inventory_item()` and `valid_now` do the
+  compliance-check heavy lifting.
 - **CVE / Vulnerability** — `CVE.affected_software` M2M links a CVE to one or
   more `SoftwareVersion`s; `Vulnerability` narrows that down to (optionally) a
-  specific `Device`, with its own `status` workflow (open → mitigated/resolved).
+  specific `Device` *or* `InventoryItem` (at most one of the two), with its
+  own `status` workflow (open → mitigated/resolved).
 - **Scripts** (Operations > Scripts > Device Lifecycle Management):
   - `Check Hardware Notices` — flags past-due and upcoming EoS.
-  - `Run Software Validation` — flags devices whose recorded software has no
-    currently-valid `ValidatedSoftware` rule, or isn't the preferred version.
+  - `Run Software Validation` — flags devices and inventory items whose
+    recorded software has no currently-valid `ValidatedSoftware` rule, or
+    isn't the preferred version.
   - `Sync CVEs from NIST NVD` — placeholder; wire up the actual NVD API 2.0
     HTTP calls once your NetBox host has outbound access to
     `services.nvd.nist.gov`.
 
-Device and DeviceType pages get a right-hand panel (via `template_content.py`)
-summarizing running software, compliance status, hardware notice, and open
-vulnerabilities at a glance.
+Device, InventoryItem, and DeviceType pages get a right-hand panel (via
+`template_content.py`) summarizing running software, compliance status, and
+open vulnerabilities at a glance (the Device panel also shows the
+`HardwareNotice` for its `DeviceType`, since hardware EoL notices are still
+`DeviceType`/`ModuleType`-scoped only — see below).
 
 ## Testing
 
@@ -159,10 +179,12 @@ exercising the view against a real NetBox + Postgres instance for that.
   compliance live via scripts rather than persisting result rows.
   Straightforward to add later as another `NetBoxModel` if you want a
   graphable history.
-- **Inventory item lifecycle** — hardware notices are scoped to
-  `Module`/`ModuleType` (NetBox's modern equivalent); if you're still
-  using NetBox's legacy `InventoryItem` model for non-modular gear, that's a
-  straightforward additional FK to add to `HardwareNotice`.
+- **Inventory item hardware notices** — `InventoryItemSoftware` and its
+  `ValidatedSoftware`/`Vulnerability` scoping now cover `InventoryItem`, but
+  `HardwareNotice` (EoS/EoL dates) is still scoped to `DeviceType`/`ModuleType`
+  only. If you're using NetBox's legacy `InventoryItem` model for non-modular
+  gear and want EoL tracking for it too, that's a straightforward additional
+  FK to add to `HardwareNotice`.
 - **VM software tracking** — `DeviceSoftware` only covers `Device`, not
   `VirtualMachine`. Trivial to mirror if needed.
 - **Automated CVE ingestion** — `SyncCVEs` is a stub; NVD API 2.0

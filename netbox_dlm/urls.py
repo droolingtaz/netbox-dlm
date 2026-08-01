@@ -89,6 +89,70 @@ urlpatterns = [
         kwargs={"model": models.DeviceSoftware},
     ),
 
+    # InventoryItemRolePlatform
+    path(
+        "inventory-item-role-platforms/",
+        views.InventoryItemRolePlatformListView.as_view(),
+        name="inventoryitemroleplatform_list",
+    ),
+    path(
+        "inventory-item-role-platforms/add/",
+        views.InventoryItemRolePlatformEditView.as_view(),
+        name="inventoryitemroleplatform_add",
+    ),
+    path(
+        "inventory-item-role-platforms/<int:pk>/",
+        views.InventoryItemRolePlatformView.as_view(),
+        name="inventoryitemroleplatform",
+    ),
+    path(
+        "inventory-item-role-platforms/<int:pk>/edit/",
+        views.InventoryItemRolePlatformEditView.as_view(),
+        name="inventoryitemroleplatform_edit",
+    ),
+    path(
+        "inventory-item-role-platforms/<int:pk>/delete/",
+        views.InventoryItemRolePlatformDeleteView.as_view(),
+        name="inventoryitemroleplatform_delete",
+    ),
+    path(
+        "inventory-item-role-platforms/delete/",
+        views.InventoryItemRolePlatformBulkDeleteView.as_view(),
+        name="inventoryitemroleplatform_bulk_delete",
+    ),
+    path(
+        "inventory-item-role-platforms/<int:pk>/changelog/",
+        ObjectChangeLogView.as_view(),
+        name="inventoryitemroleplatform_changelog",
+        kwargs={"model": models.InventoryItemRolePlatform},
+    ),
+
+    # InventoryItemSoftware
+    path("inventory-item-software/", views.InventoryItemSoftwareListView.as_view(), name="inventoryitemsoftware_list"),
+    path("inventory-item-software/add/", views.InventoryItemSoftwareEditView.as_view(), name="inventoryitemsoftware_add"),
+    path("inventory-item-software/<int:pk>/", views.InventoryItemSoftwareView.as_view(), name="inventoryitemsoftware"),
+    path(
+        "inventory-item-software/<int:pk>/edit/",
+        views.InventoryItemSoftwareEditView.as_view(),
+        name="inventoryitemsoftware_edit",
+    ),
+    path(
+        "inventory-item-software/<int:pk>/delete/",
+        views.InventoryItemSoftwareDeleteView.as_view(),
+        name="inventoryitemsoftware_delete",
+    ),
+    path(
+        "inventory-item-software/delete/",
+        views.InventoryItemSoftwareBulkDeleteView.as_view(),
+        name="inventoryitemsoftware_bulk_delete",
+    ),
+    path(
+        "inventory-item-software/<int:pk>/changelog/",
+        ObjectChangeLogView.as_view(),
+        name="inventoryitemsoftware_changelog",
+        kwargs={"model": models.InventoryItemSoftware},
+    ),
+
     # ValidatedSoftware
     path("validated-software/", views.ValidatedSoftwareListView.as_view(), name="validatedsoftware_list"),
     path("validated-software/add/", views.ValidatedSoftwareEditView.as_view(), name="validatedsoftware_add"),

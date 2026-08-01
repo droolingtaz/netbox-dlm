@@ -5,13 +5,13 @@
 <div class="row mb-3">
   <div class="col col-md-6">
     <div class="card">
-      <h5 class="card-header">Vulnerability</h5>
+      <h5 class="card-header">Inventory Item Software</h5>
       <table class="table table-hover attr-table">
-        <tr><th scope="row">CVE</th><td>{{ object.cve|linkify }}</td></tr>
+        <tr><th scope="row">Inventory item</th><td>{{ object.inventory_item|linkify }}</td></tr>
+        <tr><th scope="row">Device</th><td>{{ object.inventory_item.device|linkify }}</td></tr>
+        <tr><th scope="row">Role</th><td>{{ object.inventory_item.role|linkify|placeholder }}</td></tr>
         <tr><th scope="row">Software version</th><td>{{ object.software_version|linkify }}</td></tr>
-        <tr><th scope="row">Device</th><td>{{ object.device|linkify|placeholder }}</td></tr>
-        <tr><th scope="row">Inventory item</th><td>{{ object.inventory_item|linkify|placeholder }}</td></tr>
-        <tr><th scope="row">Status</th><td>{{ object.get_status_display }}</td></tr>
+        <tr><th scope="row">Last checked</th><td>{{ object.last_checked|placeholder }}</td></tr>
       </table>
     </div>
   </div>

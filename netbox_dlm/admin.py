@@ -5,6 +5,8 @@ from .models import (
     Contract,
     DeviceSoftware,
     HardwareNotice,
+    InventoryItemRolePlatform,
+    InventoryItemSoftware,
     Provider,
     SoftwareImageFile,
     SoftwareVersion,
@@ -55,6 +57,19 @@ class DeviceSoftwareAdmin(admin.ModelAdmin):
     search_fields = ("device__name",)
 
 
+@admin.register(InventoryItemRolePlatform)
+class InventoryItemRolePlatformAdmin(admin.ModelAdmin):
+    list_display = ("role", "platform")
+    list_filter = ("platform",)
+    search_fields = ("role__name", "platform__name")
+
+
+@admin.register(InventoryItemSoftware)
+class InventoryItemSoftwareAdmin(admin.ModelAdmin):
+    list_display = ("inventory_item", "software_version", "last_checked")
+    search_fields = ("inventory_item__name",)
+
+
 @admin.register(ValidatedSoftware)
 class ValidatedSoftwareAdmin(admin.ModelAdmin):
     list_display = ("software_version", "start", "end", "preferred", "valid_now")
@@ -70,6 +85,6 @@ class CVEAdmin(admin.ModelAdmin):
 
 @admin.register(Vulnerability)
 class VulnerabilityAdmin(admin.ModelAdmin):
-    list_display = ("cve", "software_version", "device", "status")
+    list_display = ("cve", "software_version", "device", "inventory_item", "status")
     list_filter = ("status",)
-    search_fields = ("cve__cve_id", "device__name")
+    search_fields = ("cve__cve_id", "device__name", "inventory_item__name")

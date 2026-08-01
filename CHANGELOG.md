@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `InventoryItemSoftware` tracks software running on a `dcim.InventoryItem`
+  (e.g. a Cisco CIMC or Dell iDRAC modeled as an inventory item), mirroring
+  `DeviceSoftware`.
+- `InventoryItemRolePlatform` maps an `InventoryItemRole` to the `Platform`
+  whose `SoftwareVersion`s apply to it, since `InventoryItem` has no
+  `platform` field of its own. Used to narrow the `InventoryItemSoftware`
+  version picker and validate the selection server-side.
+- `ValidatedSoftware` gained an `inventory_item_roles` scoping field and a
+  `covers_inventory_item()` method, so compliance rules can cover inventory
+  items the same way they already cover devices.
+- `Vulnerability` gained an optional `inventory_item` FK (mutually exclusive
+  with `device`), so CVE exposure can be scoped to a specific inventory item.
+- `Run Software Validation` now also checks `InventoryItemSoftware` records
+  against `ValidatedSoftware` rules.
+- InventoryItem detail pages get a lifecycle summary panel (running
+  software, compliance, open vulnerabilities), mirroring the existing
+  Device panel.
+
 ## [0.5.0] - 2026-07-29
 
 ### Added

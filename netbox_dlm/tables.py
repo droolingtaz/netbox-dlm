@@ -7,6 +7,8 @@ from .models import (
     Contract,
     DeviceSoftware,
     HardwareNotice,
+    InventoryItemRolePlatform,
+    InventoryItemSoftware,
     Provider,
     SoftwareImageFile,
     SoftwareVersion,
@@ -118,6 +120,28 @@ class DeviceSoftwareTable(NetBoxTable):
         default_columns = ("device", "software_version", "last_checked")
 
 
+class InventoryItemRolePlatformTable(NetBoxTable):
+    role = tables.Column(linkify=True)
+    platform = tables.Column(linkify=True)
+    tags = columns.TagColumn()
+
+    class Meta(NetBoxTable.Meta):
+        model = InventoryItemRolePlatform
+        fields = ("pk", "id", "role", "platform", "tags")
+        default_columns = ("role", "platform")
+
+
+class InventoryItemSoftwareTable(NetBoxTable):
+    inventory_item = tables.Column(linkify=True)
+    software_version = tables.Column(linkify=True)
+    tags = columns.TagColumn()
+
+    class Meta(NetBoxTable.Meta):
+        model = InventoryItemSoftware
+        fields = ("pk", "id", "inventory_item", "software_version", "last_checked", "tags")
+        default_columns = ("inventory_item", "software_version", "last_checked")
+
+
 class ValidatedSoftwareTable(NetBoxTable):
     software_version = tables.Column(linkify=True)
     preferred = columns.BooleanColumn()
@@ -150,10 +174,13 @@ class VulnerabilityTable(NetBoxTable):
     cve = tables.Column(linkify=True)
     software_version = tables.Column(linkify=True)
     device = tables.Column(linkify=True)
+    inventory_item = tables.Column(linkify=True)
     status = columns.ChoiceFieldColumn()
     tags = columns.TagColumn()
 
     class Meta(NetBoxTable.Meta):
         model = Vulnerability
-        fields = ("pk", "id", "cve", "software_version", "device", "status", "tags")
-        default_columns = ("cve", "software_version", "device", "status")
+        fields = (
+            "pk", "id", "cve", "software_version", "device", "inventory_item", "status", "tags",
+        )
+        default_columns = ("cve", "software_version", "device", "inventory_item", "status")

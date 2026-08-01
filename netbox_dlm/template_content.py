@@ -1,6 +1,12 @@
 from netbox.plugins import PluginTemplateExtension
 
-from .models import DeviceSoftware, HardwareNotice, ValidatedSoftware, Vulnerability
+from .models import (
+    DeviceSoftware,
+    HardwareNotice,
+    InventoryItemSoftware,
+    ValidatedSoftware,
+    Vulnerability,
+)
 
 
 class DeviceLifecyclePanel(PluginTemplateExtension):
@@ -33,6 +39,38 @@ class DeviceLifecyclePanel(PluginTemplateExtension):
         )
 
 
+class InventoryItemLifecyclePanel(PluginTemplateExtension):
+    """Adds a lifecycle summary panel to the InventoryItem detail view."""
+
+    models = ["dcim.inventoryitem"]
+
+    def right_page(self):
+        item = self.context["object"]
+        software = (
+            InventoryItemSoftware.objects.filter(inventory_item=item)
+            .select_related("software_version")
+            .first()
+        )
+        vulnerabilities = Vulnerability.objects.filter(inventory_item=item).exclude(status="resolved")
+
+        validated_rules = []
+        if software:
+            validated_rules = [
+                rule
+                for rule in ValidatedSoftware.objects.filter(software_version=software.software_version)
+                if rule.valid_now and rule.covers_inventory_item(item)
+            ]
+
+        return self.render(
+            "netbox_dlm/inventoryitem_lifecycle_panel.html",
+            extra_context={
+                "software": software,
+                "vulnerabilities": vulnerabilities,
+                "validated_rules": validated_rules,
+            },
+        )
+
+
 class DeviceTypeLifecyclePanel(PluginTemplateExtension):
     """Adds a hardware end-of-life panel to the DeviceType detail view."""
 
@@ -47,4 +85,4 @@ class DeviceTypeLifecyclePanel(PluginTemplateExtension):
         )
 
 
-template_extensions = [DeviceLifecyclePanel, DeviceTypeLifecyclePanel]
+template_extensions = [DeviceLifecyclePanel, InventoryItemLifecyclePanel, DeviceTypeLifecyclePanel]

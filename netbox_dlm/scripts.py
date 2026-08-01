@@ -11,7 +11,14 @@ import datetime
 from django.utils import timezone
 from extras.scripts import BooleanVar, IntegerVar, Script
 
-from .models import CVE, DeviceSoftware, HardwareNotice, ValidatedSoftware, Vulnerability
+from .models import (
+    CVE,
+    DeviceSoftware,
+    HardwareNotice,
+    InventoryItemSoftware,
+    ValidatedSoftware,
+    Vulnerability,
+)
 
 
 class CheckHardwareNotices(Script):
@@ -63,9 +70,9 @@ class RunSoftwareValidation(Script):
     class Meta:
         name = "Run Software Validation"
         description = (
-            "Compares each device's currently-recorded software against "
-            "ValidatedSoftware rules and reports any that are out of compliance "
-            "or unrecognized."
+            "Compares each device's and inventory item's currently-recorded "
+            "software against ValidatedSoftware rules and reports any that "
+            "are out of compliance or unrecognized."
         )
 
     def run(self, data, commit):
@@ -94,7 +101,31 @@ class RunSoftwareValidation(Script):
             else:
                 self.log_success(f"{device}: running compliant, preferred software.")
 
-        self.log_info(f"Checked {checked} devices, {non_compliant} non-compliant.")
+        for record in InventoryItemSoftware.objects.select_related(
+            "inventory_item", "software_version"
+        ):
+            checked += 1
+            item = record.inventory_item
+            rules = ValidatedSoftware.objects.filter(
+                software_version=record.software_version
+            )
+            applicable = [r for r in rules if r.valid_now and r.covers_inventory_item(item)]
+
+            if not applicable:
+                non_compliant += 1
+                self.log_failure(
+                    f"{item}: running {record.software_version}, which has no "
+                    f"currently-valid ValidatedSoftware rule covering it."
+                )
+            elif not any(r.preferred for r in applicable):
+                self.log_warning(
+                    f"{item}: running {record.software_version}, which is valid "
+                    f"but not the preferred version for its scope."
+                )
+            else:
+                self.log_success(f"{item}: running compliant, preferred software.")
+
+        self.log_info(f"Checked {checked} devices/inventory items, {non_compliant} non-compliant.")
 
 
 class SyncCVEs(Script):

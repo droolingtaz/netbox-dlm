@@ -59,5 +59,14 @@
       </ul>
     </div>
   </div>
+  <div class="col col-md-3">
+    <div class="card">
+      <h5 class="card-header">Inventory Item Roles</h5>
+      <ul class="list-group list-group-flush">
+        {% for role in object.inventory_item_roles.all %}<li class="list-group-item">{{ role|linkify }}</li>
+        {% empty %}<li class="list-group-item text-muted">None</li>{% endfor %}
+      </ul>
+    </div>
+  </div>
 </div>
 {% endblock %}

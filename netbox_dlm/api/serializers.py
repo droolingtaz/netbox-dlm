@@ -2,6 +2,8 @@ from dcim.api.serializers import (
     DeviceSerializer,
     DeviceRoleSerializer,
     DeviceTypeSerializer,
+    InventoryItemRoleSerializer,
+    InventoryItemSerializer,
     ModuleTypeSerializer,
     PlatformSerializer,
 )
@@ -22,6 +24,8 @@ from ..models import (
     Contract,
     DeviceSoftware,
     HardwareNotice,
+    InventoryItemRolePlatform,
+    InventoryItemSoftware,
     Provider,
     SoftwareImageFile,
     SoftwareVersion,
@@ -126,6 +130,36 @@ class DeviceSoftwareSerializer(NetBoxModelSerializer):
         )
 
 
+class InventoryItemRolePlatformSerializer(NetBoxModelSerializer):
+    url = serializers.HyperlinkedIdentityField(
+        view_name="plugins-api:netbox_dlm-api:inventoryitemroleplatform-detail"
+    )
+    role = InventoryItemRoleSerializer(nested=True)
+    platform = PlatformSerializer(nested=True)
+
+    class Meta:
+        model = InventoryItemRolePlatform
+        fields = (
+            "id", "url", "display", "role", "platform", "comments", "tags",
+            "custom_fields", "created", "last_updated",
+        )
+
+
+class InventoryItemSoftwareSerializer(NetBoxModelSerializer):
+    url = serializers.HyperlinkedIdentityField(
+        view_name="plugins-api:netbox_dlm-api:inventoryitemsoftware-detail"
+    )
+    inventory_item = InventoryItemSerializer(nested=True)
+    software_version = SoftwareVersionSerializer(nested=True)
+
+    class Meta:
+        model = InventoryItemSoftware
+        fields = (
+            "id", "url", "display", "inventory_item", "software_version", "last_checked",
+            "comments", "tags", "custom_fields", "created", "last_updated",
+        )
+
+
 class ValidatedSoftwareSerializer(NetBoxModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         view_name="plugins-api:netbox_dlm-api:validatedsoftware-detail"
@@ -135,12 +169,14 @@ class ValidatedSoftwareSerializer(NetBoxModelSerializer):
     device_roles = DeviceRoleSerializer(nested=True, many=True, required=False)
     devices = DeviceSerializer(nested=True, many=True, required=False)
     platforms = PlatformSerializer(nested=True, many=True, required=False)
+    inventory_item_roles = InventoryItemRoleSerializer(nested=True, many=True, required=False)
 
     class Meta:
         model = ValidatedSoftware
         fields = (
             "id", "url", "display", "software_version", "device_types",
-            "device_roles", "devices", "platforms", "start", "end", "preferred",
+            "device_roles", "devices", "platforms", "inventory_item_roles",
+            "start", "end", "preferred",
             "comments", "tags", "custom_fields", "created", "last_updated",
         )
 
@@ -170,11 +206,12 @@ class VulnerabilitySerializer(NetBoxModelSerializer):
     cve = CVESerializer(nested=True)
     software_version = SoftwareVersionSerializer(nested=True)
     device = DeviceSerializer(nested=True, required=False, allow_null=True)
+    inventory_item = InventoryItemSerializer(nested=True, required=False, allow_null=True)
     status = ChoiceField(choices=VulnerabilityStatusChoices, required=False)
 
     class Meta:
         model = Vulnerability
         fields = (
-            "id", "url", "display", "cve", "software_version", "device",
+            "id", "url", "display", "cve", "software_version", "device", "inventory_item",
             "status", "comments", "tags", "custom_fields", "created", "last_updated",
         )

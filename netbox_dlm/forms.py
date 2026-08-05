@@ -51,19 +51,20 @@ class ProviderForm(NetBoxModelForm):
 class ContractForm(NetBoxModelForm):
     provider = DynamicModelChoiceField(queryset=Provider.objects.all())
     devices = DynamicModelMultipleChoiceField(queryset=Device.objects.all(), required=False)
+    platforms = DynamicModelMultipleChoiceField(queryset=Platform.objects.all(), required=False)
     comments = CommentField()
 
     fieldsets = (
         FieldSet("provider", "name", "contract_number", "support_level", name="Contract"),
         FieldSet("start_date", "end_date", "cost", "currency", name="Term"),
-        FieldSet("devices", name="Coverage"),
+        FieldSet("devices", "platforms", name="Coverage"),
     )
 
     class Meta:
         model = Contract
         fields = (
             "provider", "name", "contract_number", "support_level", "start_date",
-            "end_date", "cost", "currency", "devices", "comments", "tags",
+            "end_date", "cost", "currency", "devices", "platforms", "comments", "tags",
         )
         widgets = {
             "start_date": forms.DateInput(attrs={"type": "date"}),
@@ -76,6 +77,7 @@ class ContractFilterForm(NetBoxModelFilterSetForm):
     provider_id = DynamicModelMultipleChoiceField(queryset=Provider.objects.all(), required=False)
     support_level = forms.MultipleChoiceField(choices=ContractSupportLevelChoices, required=False)
     device_id = DynamicModelMultipleChoiceField(queryset=Device.objects.all(), required=False)
+    platform_id = DynamicModelMultipleChoiceField(queryset=Platform.objects.all(), required=False)
 
 
 # -----------------------------------------------------------------------------

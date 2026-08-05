@@ -53,6 +53,9 @@ class ContractFilterSet(NetBoxModelFilterSet):
     device_id = django_filters.ModelMultipleChoiceFilter(
         field_name="devices", queryset=Device.objects.all()
     )
+    platform_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="platforms", queryset=Platform.objects.all()
+    )
 
     class Meta:
         model = Contract

@@ -24,7 +24,7 @@ class ProviderViewSet(NetBoxModelViewSet):
 
 
 class ContractViewSet(NetBoxModelViewSet):
-    queryset = Contract.objects.prefetch_related("provider", "devices", "tags")
+    queryset = Contract.objects.prefetch_related("provider", "devices", "platforms", "tags")
     serializer_class = serializers.ContractSerializer
     filterset_class = filtersets.ContractFilterSet
 

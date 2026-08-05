@@ -112,7 +112,11 @@ netbox_dlm/
 ## Using it
 
 - **Providers / Contracts** — track who supports what, and which devices a
-  contract covers (`Contract.devices` M2M).
+  contract covers, either explicitly (`Contract.devices` M2M) or by
+  `Contract.platforms` (any device on a covered platform). Unlike
+  `ValidatedSoftware`, an empty scope covers nothing — `covers_device()`
+  and `covered_devices` do the lookup, so a contract can't silently apply to
+  devices nobody scoped it to.
 - **Hardware Notices** — one row per `DeviceType` *or* `ModuleType` (not
   both — enforced in `clean()`), with EoS/EoL/EoSecurity/EoSW dates.
 - **Software Versions / Images** — per `Platform`. `SoftwareVersion.release_designation`

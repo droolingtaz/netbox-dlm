@@ -55,13 +55,14 @@ class ContractSerializer(NetBoxModelSerializer):
     provider = ProviderSerializer(nested=True)
     support_level = ChoiceField(choices=ContractSupportLevelChoices, required=False)
     devices = DeviceSerializer(nested=True, many=True, required=False)
+    platforms = PlatformSerializer(nested=True, many=True, required=False)
 
     class Meta:
         model = Contract
         fields = (
             "id", "url", "display", "provider", "name", "contract_number",
             "start_date", "end_date", "cost", "currency", "support_level",
-            "devices", "comments", "tags", "custom_fields", "created", "last_updated",
+            "devices", "platforms", "comments", "tags", "custom_fields", "created", "last_updated",
         )
 
 

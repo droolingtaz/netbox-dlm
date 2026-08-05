@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `Contract.platforms` M2M lets a contract cover every device on a given
+  `Platform`, not just explicitly-listed `devices`. `covers_device()` checks
+  both; `covered_devices` returns the full resolved set. Unlike
+  `ValidatedSoftware`'s scoping, an empty scope covers nothing here — a
+  contract can't silently apply to devices nobody scoped it to.
+
+## [0.6.0] - 2026-08-01
+
+### Added
+
 - `InventoryItemSoftware` tracks software running on a `dcim.InventoryItem`
   (e.g. a Cisco CIMC or Dell iDRAC modeled as an inventory item), mirroring
   `DeviceSoftware`.

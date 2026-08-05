@@ -32,11 +32,38 @@
 </div>
 
 <div class="row mb-3">
-  <div class="col col-md-12">
+  <div class="col col-md-6">
     <div class="card">
-      <h5 class="card-header">Covered Devices ({{ object.devices.count }})</h5>
+      <h5 class="card-header">Specific Devices</h5>
       <ul class="list-group list-group-flush">
         {% for device in object.devices.all %}
+        <li class="list-group-item">{{ device|linkify }}</li>
+        {% empty %}
+        <li class="list-group-item text-muted">None</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="col col-md-6">
+    <div class="card">
+      <h5 class="card-header">Platforms</h5>
+      <ul class="list-group list-group-flush">
+        {% for platform in object.platforms.all %}
+        <li class="list-group-item">{{ platform|linkify }}</li>
+        {% empty %}
+        <li class="list-group-item text-muted">None</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-3">
+  <div class="col col-md-12">
+    <div class="card">
+      <h5 class="card-header">Covered Devices ({{ object.covered_devices.count }})</h5>
+      <ul class="list-group list-group-flush">
+        {% for device in object.covered_devices %}
         <li class="list-group-item">{{ device|linkify }}</li>
         {% empty %}
         <li class="list-group-item text-muted">None</li>

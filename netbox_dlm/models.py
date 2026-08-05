@@ -68,6 +68,7 @@ class Contract(NetBoxModel):
     devices = models.ManyToManyField(
         to=Device, related_name="lifecycle_contracts", blank=True
     )
+    platforms = models.ManyToManyField(to=Platform, related_name="+", blank=True)
     comments = models.TextField(blank=True)
 
     class Meta:
@@ -98,6 +99,26 @@ class Contract(NetBoxModel):
         if not self.end_date:
             return False
         return timezone.localdate() <= self.end_date <= timezone.localdate() + datetime.timedelta(days=days)
+
+    def covers_device(self, device):
+        """
+        Whether this contract covers the given device, either because it's
+        explicitly listed or because its platform is covered. Unlike
+        ValidatedSoftware, an empty scope covers nothing — a support
+        contract shouldn't silently apply to every device just because
+        nobody scoped it yet.
+        """
+        if self.devices.filter(pk=device.pk).exists():
+            return True
+        return bool(device.platform_id and self.platforms.filter(pk=device.platform_id).exists())
+
+    @property
+    def covered_devices(self):
+        """All devices covered by this contract: explicit devices plus any
+        whose platform is in scope."""
+        return Device.objects.filter(
+            models.Q(lifecycle_contracts=self) | models.Q(platform__in=self.platforms.all())
+        ).distinct()
 
 
 # -----------------------------------------------------------------------------

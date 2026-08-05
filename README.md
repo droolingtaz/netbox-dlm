@@ -64,8 +64,14 @@ netbox_dlm/
 
 ## Installation
 
-1. Copy `netbox_dlm/` onto your NetBox host inside the same
-   Python environment as NetBox, or install it editable via the included
+1. Install the package into the same Python environment as NetBox — from
+   PyPI:
+
+   ```bash
+   pip install netbox-dlm
+   ```
+
+   or, for local development, editable from a checkout via the included
    `pyproject.toml`:
 
    ```bash
@@ -108,6 +114,57 @@ netbox_dlm/
 
 5. If you're serving static files separately behind a reverse proxy, run
    `python manage.py collectstatic --no-input`.
+
+### Docker (netbox-docker)
+
+Nothing about this plugin is Docker-incompatible — it's pure Python (only
+dependency is `requests`, which NetBox core already pulls in), has no
+compiled extensions, and doesn't use `FileField`/`ImageField` anywhere, so
+it doesn't care whether media storage is local disk or S3. The steps just
+differ from the bare-metal instructions above because of how
+[netbox-docker](https://github.com/netbox-community/netbox-docker) itself
+works, not because of anything specific to this plugin:
+
+1. `netbox-docker`'s base image doesn't ship third-party plugins, so you
+   need a custom image. Add a `plugin_requirements.txt` next to your
+   `docker-compose.yml`:
+
+   ```
+   netbox-dlm
+   ```
+
+   and a `Dockerfile-Plugins` (see netbox-docker's
+   [plugins documentation](https://github.com/netbox-community/netbox-docker/wiki/Using-Netbox-Plugins)
+   for the current template) that `RUN`s
+   `pip install -r /opt/netbox/plugin_requirements.txt` on top of the base
+   image. Point your compose file's `build` at it instead of pulling the
+   stock image.
+
+2. Configure the plugin via netbox-docker's dedicated config file,
+   `/etc/netbox/config/plugins.py` (typically mounted from
+   `configuration/plugins.py` in your compose repo), rather than editing
+   `configuration.py` directly:
+
+   ```python
+   PLUGINS = ["netbox_dlm"]
+
+   PLUGINS_CONFIG = {
+       "netbox_dlm": {
+           "nist_api_key": None,
+           "eos_warning_days": 180,
+       },
+   }
+   ```
+
+3. Rebuild and restart: `docker compose build && docker compose up -d`.
+   netbox-docker runs `migrate` and `collectstatic` automatically on
+   container startup, so no separate migration step is needed — just watch
+   the `netbox` container's startup logs to confirm the migration applied
+   cleanly.
+
+4. The same version-match caveat from step 3 above still applies: check
+   that the NetBox image tag you're pinned to is compatible with the
+   shipped migrations before rolling this out to a production stack.
 
 ## Using it
 

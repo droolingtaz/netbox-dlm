@@ -133,13 +133,14 @@ class InventoryItemRolePlatformTable(NetBoxTable):
 
 class InventoryItemSoftwareTable(NetBoxTable):
     inventory_item = tables.Column(linkify=True)
+    device = tables.Column(accessor="inventory_item__device", linkify=True, verbose_name="Device")
     software_version = tables.Column(linkify=True)
     tags = columns.TagColumn()
 
     class Meta(NetBoxTable.Meta):
         model = InventoryItemSoftware
-        fields = ("pk", "id", "inventory_item", "software_version", "last_checked", "tags")
-        default_columns = ("inventory_item", "software_version", "last_checked")
+        fields = ("pk", "id", "inventory_item", "device", "software_version", "last_checked", "tags")
+        default_columns = ("inventory_item", "device", "software_version", "last_checked")
 
 
 class ValidatedSoftwareTable(NetBoxTable):

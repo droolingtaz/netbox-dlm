@@ -64,7 +64,7 @@ class CVESeverityChoices(ChoiceSet):
 
     CHOICES = [
         (NONE, "None", "gray"),
-        (LOW, "Low", "blue"),
+        (LOW, "Low", "yellow"),
         (MEDIUM, "Medium", "yellow"),
         (HIGH, "High", "orange"),
         (CRITICAL, "Critical", "red"),

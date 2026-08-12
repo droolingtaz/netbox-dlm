@@ -34,7 +34,7 @@ class ProviderTable(NetBoxTable):
 class ContractTable(NetBoxTable):
     name = tables.Column(linkify=True)
     provider = tables.Column(linkify=True)
-    device_count = tables.Column(verbose_name="Devices")
+    device_count = tables.Column(verbose_name="Devices", empty_values=())
     end_date = tables.Column()
     tags = columns.TagColumn()
 
@@ -52,6 +52,9 @@ class ContractTable(NetBoxTable):
         if record.expiring_soon:
             return f"{value} (expiring soon)"
         return value
+
+    def render_device_count(self, record):
+        return record.covered_devices.count()
 
 
 class HardwareNoticeTable(NetBoxTable):
@@ -79,6 +82,7 @@ class SoftwareVersionTable(NetBoxTable):
     long_term_support = columns.BooleanColumn(verbose_name="LTS")
     release_designation = columns.ChoiceFieldColumn(verbose_name="Release Designation")
     device_count = tables.Column(verbose_name="Devices")
+    inventory_item_count = tables.Column(verbose_name="Inventory Items")
     tags = columns.TagColumn()
 
     class Meta(NetBoxTable.Meta):
@@ -86,11 +90,12 @@ class SoftwareVersionTable(NetBoxTable):
         fields = (
             "pk", "id", "display", "platform", "version", "release_date",
             "end_of_support", "long_term_support", "release_designation",
-            "documentation_url", "device_count", "tags",
+            "documentation_url", "device_count", "inventory_item_count", "tags",
         )
         default_columns = (
             "display", "platform", "version", "release_date",
-            "end_of_support", "long_term_support", "release_designation", "device_count",
+            "end_of_support", "long_term_support", "release_designation",
+            "device_count", "inventory_item_count",
         )
 
 

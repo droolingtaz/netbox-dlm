@@ -52,7 +52,7 @@ class ProviderBulkDeleteView(generic.BulkDeleteView):
 # -----------------------------------------------------------------------------
 
 class ContractListView(generic.ObjectListView):
-    queryset = Contract.objects.annotate(device_count=Count("devices", distinct=True))
+    queryset = Contract.objects.all()
     table = tables.ContractTable
     filterset = filtersets.ContractFilterSet
     filterset_form = forms.ContractFilterForm
@@ -72,7 +72,7 @@ class ContractDeleteView(generic.ObjectDeleteView):
 
 
 class ContractBulkDeleteView(generic.BulkDeleteView):
-    queryset = Contract.objects.annotate(device_count=Count("devices", distinct=True))
+    queryset = Contract.objects.all()
     table = tables.ContractTable
     filterset = filtersets.ContractFilterSet
 
@@ -112,7 +112,10 @@ class HardwareNoticeBulkDeleteView(generic.BulkDeleteView):
 # -----------------------------------------------------------------------------
 
 class SoftwareVersionListView(generic.ObjectListView):
-    queryset = SoftwareVersion.objects.annotate(device_count=Count("devices_running", distinct=True))
+    queryset = SoftwareVersion.objects.annotate(
+        device_count=Count("devices_running", distinct=True),
+        inventory_item_count=Count("inventory_items_running", distinct=True),
+    )
     table = tables.SoftwareVersionTable
     filterset = filtersets.SoftwareVersionFilterSet
     filterset_form = forms.SoftwareVersionFilterForm
@@ -140,7 +143,10 @@ class SoftwareVersionDeleteView(generic.ObjectDeleteView):
 
 
 class SoftwareVersionBulkDeleteView(generic.BulkDeleteView):
-    queryset = SoftwareVersion.objects.annotate(device_count=Count("devices_running", distinct=True))
+    queryset = SoftwareVersion.objects.annotate(
+        device_count=Count("devices_running", distinct=True),
+        inventory_item_count=Count("inventory_items_running", distinct=True),
+    )
     table = tables.SoftwareVersionTable
     filterset = filtersets.SoftwareVersionFilterSet
 

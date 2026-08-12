@@ -9,6 +9,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `SoftwareVersion` list page gained an "Inventory Items" column showing
+  the count of `InventoryItemSoftware` records running that version,
+  alongside the existing Devices column.
+
+### Fixed
+
+- The `Contract` list page's Devices column used a `Count("devices")`
+  annotation covering only explicitly-listed devices, so a contract scoped
+  purely via `Contract.platforms` showed 0 even though its detail page
+  correctly listed devices covered through platform. The list now uses the
+  same `covered_devices` resolution as the detail page.
+- CVE severity badges (CVE list/detail pages, and the SoftwareVersion
+  detail page's CVE panel) render with the correct color again —
+  critical=red, high=orange, medium/low=yellow. The detail-page templates
+  built the badge class from the raw severity string (e.g.
+  `text-bg-critical`, not a real color class) instead of
+  `CVESeverityChoices`' configured color; `low` is now grouped with
+  `medium` under yellow instead of blue.
+
+## [0.7.0] - 2026-08-05
+
+### Added
+
 - `Contract.platforms` M2M lets a contract cover every device on a given
   `Platform`, not just explicitly-listed `devices`. `covers_device()` checks
   both; `covered_devices` returns the full resolved set. Unlike

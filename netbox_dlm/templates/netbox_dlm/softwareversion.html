@@ -93,7 +93,7 @@
         {% for cve in cves %}
         <li class="list-group-item">
           {{ cve|linkify }}
-          <span class="badge text-bg-{{ cve.severity|lower }}">{{ cve.get_severity_display }}</span>
+          <span class="badge text-bg-{{ cve.get_severity_color }}">{{ cve.get_severity_display }}</span>
         </li>
         {% empty %}
         <li class="list-group-item text-muted">None</li>

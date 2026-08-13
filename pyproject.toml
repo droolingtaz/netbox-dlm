@@ -12,7 +12,7 @@ license-files = ["LICENSE"]
 authors = [
     { name = "Blake Parker", email = "blake.parker@e280.com" },
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Framework :: Django",
@@ -23,6 +23,9 @@ classifiers = [
 dependencies = [
     "requests>=2.28,<3.0",
 ]
+
+[project.entry-points."netbox.plugins"]
+netbox_dlm = "netbox_dlm:config"
 
 [project.urls]
 Homepage = "https://github.com/droolingtaz/netbox-dlm"

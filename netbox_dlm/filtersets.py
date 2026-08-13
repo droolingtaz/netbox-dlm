@@ -11,6 +11,7 @@ from dcim.models import (
     Platform,
 )
 from netbox.filtersets import NetBoxModelFilterSet
+from utilities.filters import register_filterset
 
 from .choices import (
     ContractSupportLevelChoices,
@@ -34,6 +35,7 @@ from .models import (
 )
 
 
+@register_filterset
 class ProviderFilterSet(NetBoxModelFilterSet):
     class Meta:
         model = Provider
@@ -47,6 +49,7 @@ class ProviderFilterSet(NetBoxModelFilterSet):
         )
 
 
+@register_filterset
 class ContractFilterSet(NetBoxModelFilterSet):
     provider_id = django_filters.ModelMultipleChoiceFilter(queryset=Provider.objects.all())
     support_level = django_filters.MultipleChoiceFilter(choices=ContractSupportLevelChoices)
@@ -67,6 +70,7 @@ class ContractFilterSet(NetBoxModelFilterSet):
         return queryset.filter(Q(name__icontains=value) | Q(contract_number__icontains=value))
 
 
+@register_filterset
 class HardwareNoticeFilterSet(NetBoxModelFilterSet):
     device_type_id = django_filters.ModelMultipleChoiceFilter(queryset=DeviceType.objects.all())
     module_type_id = django_filters.ModelMultipleChoiceFilter(queryset=ModuleType.objects.all())
@@ -83,6 +87,7 @@ class HardwareNoticeFilterSet(NetBoxModelFilterSet):
         )
 
 
+@register_filterset
 class SoftwareVersionFilterSet(NetBoxModelFilterSet):
     platform_id = django_filters.ModelMultipleChoiceFilter(queryset=Platform.objects.all())
     long_term_support = django_filters.BooleanFilter()
@@ -114,6 +119,7 @@ class SoftwareVersionFilterSet(NetBoxModelFilterSet):
         return queryset.filter(platform_id=mapping.platform_id)
 
 
+@register_filterset
 class SoftwareImageFileFilterSet(NetBoxModelFilterSet):
     software_version_id = django_filters.ModelMultipleChoiceFilter(
         queryset=SoftwareVersion.objects.all()
@@ -129,6 +135,7 @@ class SoftwareImageFileFilterSet(NetBoxModelFilterSet):
         return queryset.filter(Q(file_name__icontains=value) | Q(checksum__icontains=value))
 
 
+@register_filterset
 class DeviceSoftwareFilterSet(NetBoxModelFilterSet):
     device_id = django_filters.ModelMultipleChoiceFilter(queryset=Device.objects.all())
     software_version_id = django_filters.ModelMultipleChoiceFilter(
@@ -145,6 +152,7 @@ class DeviceSoftwareFilterSet(NetBoxModelFilterSet):
         return queryset.filter(Q(device__name__icontains=value))
 
 
+@register_filterset
 class InventoryItemRolePlatformFilterSet(NetBoxModelFilterSet):
     role_id = django_filters.ModelMultipleChoiceFilter(queryset=InventoryItemRole.objects.all())
     platform_id = django_filters.ModelMultipleChoiceFilter(queryset=Platform.objects.all())
@@ -157,6 +165,7 @@ class InventoryItemRolePlatformFilterSet(NetBoxModelFilterSet):
         return queryset
 
 
+@register_filterset
 class InventoryItemSoftwareFilterSet(NetBoxModelFilterSet):
     inventory_item_id = django_filters.ModelMultipleChoiceFilter(queryset=InventoryItem.objects.all())
     software_version_id = django_filters.ModelMultipleChoiceFilter(
@@ -173,6 +182,7 @@ class InventoryItemSoftwareFilterSet(NetBoxModelFilterSet):
         return queryset.filter(Q(inventory_item__name__icontains=value))
 
 
+@register_filterset
 class ValidatedSoftwareFilterSet(NetBoxModelFilterSet):
     software_version_id = django_filters.ModelMultipleChoiceFilter(
         queryset=SoftwareVersion.objects.all()
@@ -199,6 +209,7 @@ class ValidatedSoftwareFilterSet(NetBoxModelFilterSet):
         return queryset
 
 
+@register_filterset
 class CVEFilterSet(NetBoxModelFilterSet):
     severity = django_filters.MultipleChoiceFilter(choices=CVESeverityChoices)
     status = django_filters.MultipleChoiceFilter(choices=CVEStatusChoices)
@@ -218,6 +229,7 @@ class CVEFilterSet(NetBoxModelFilterSet):
         )
 
 
+@register_filterset
 class VulnerabilityFilterSet(NetBoxModelFilterSet):
     cve_id = django_filters.ModelMultipleChoiceFilter(queryset=CVE.objects.all())
     device_id = django_filters.ModelMultipleChoiceFilter(queryset=Device.objects.all())

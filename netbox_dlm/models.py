@@ -5,15 +5,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 
-from dcim.models import (
-    Device,
-    DeviceRole,
-    DeviceType,
-    InventoryItem,
-    InventoryItemRole,
-    ModuleType,
-    Platform,
-)
+from dcim.models import Device
 from netbox.models import NetBoxModel
 
 from .choices import (
@@ -66,9 +58,9 @@ class Contract(NetBoxModel):
         max_length=30, choices=ContractSupportLevelChoices, blank=True
     )
     devices = models.ManyToManyField(
-        to=Device, related_name="lifecycle_contracts", blank=True
+        to='dcim.Device', related_name="lifecycle_contracts", blank=True
     )
-    platforms = models.ManyToManyField(to=Platform, related_name="+", blank=True)
+    platforms = models.ManyToManyField(to='dcim.Platform', related_name="+", blank=True)
     comments = models.TextField(blank=True)
 
     class Meta:
@@ -132,14 +124,14 @@ class HardwareNotice(NetBoxModel):
     """
 
     device_type = models.ForeignKey(
-        to=DeviceType,
+        to='dcim.DeviceType',
         on_delete=models.CASCADE,
         related_name="hardware_notices",
         blank=True,
         null=True,
     )
     module_type = models.ForeignKey(
-        to=ModuleType,
+        to='dcim.ModuleType',
         on_delete=models.CASCADE,
         related_name="hardware_notices",
         blank=True,
@@ -200,7 +192,7 @@ class SoftwareVersion(NetBoxModel):
     """A specific software/firmware release for a Platform."""
 
     platform = models.ForeignKey(
-        to=Platform, on_delete=models.CASCADE, related_name="software_versions"
+        to='dcim.Platform', on_delete=models.CASCADE, related_name="software_versions"
     )
     version = models.CharField(max_length=50)
     alias = models.CharField(max_length=100, blank=True, help_text="Friendly display name")
@@ -287,7 +279,7 @@ class DeviceSoftware(NetBoxModel):
     """Tracks which SoftwareVersion is currently running on a given Device."""
 
     device = models.OneToOneField(
-        to=Device, on_delete=models.CASCADE, related_name="lifecycle_software"
+        to='dcim.Device', on_delete=models.CASCADE, related_name="lifecycle_software"
     )
     software_version = models.ForeignKey(
         to=SoftwareVersion, on_delete=models.PROTECT, related_name="devices_running"
@@ -319,10 +311,10 @@ class InventoryItemRolePlatform(NetBoxModel):
     """
 
     role = models.OneToOneField(
-        to=InventoryItemRole, on_delete=models.CASCADE, related_name="lifecycle_platform"
+        to='dcim.InventoryItemRole', on_delete=models.CASCADE, related_name="lifecycle_platform"
     )
     platform = models.ForeignKey(
-        to=Platform, on_delete=models.PROTECT, related_name="+"
+        to='dcim.Platform', on_delete=models.PROTECT, related_name="+"
     )
     comments = models.TextField(blank=True)
 
@@ -342,7 +334,7 @@ class InventoryItemSoftware(NetBoxModel):
     """Tracks which SoftwareVersion is currently running on a given InventoryItem."""
 
     inventory_item = models.OneToOneField(
-        to=InventoryItem, on_delete=models.CASCADE, related_name="lifecycle_software"
+        to='dcim.InventoryItem', on_delete=models.CASCADE, related_name="lifecycle_software"
     )
     software_version = models.ForeignKey(
         to=SoftwareVersion, on_delete=models.PROTECT, related_name="inventory_items_running"
@@ -390,12 +382,12 @@ class ValidatedSoftware(NetBoxModel):
     software_version = models.ForeignKey(
         to=SoftwareVersion, on_delete=models.CASCADE, related_name="validated_rules"
     )
-    device_types = models.ManyToManyField(to=DeviceType, related_name="+", blank=True)
-    device_roles = models.ManyToManyField(to=DeviceRole, related_name="+", blank=True)
-    devices = models.ManyToManyField(to=Device, related_name="+", blank=True)
-    platforms = models.ManyToManyField(to=Platform, related_name="+", blank=True)
+    device_types = models.ManyToManyField(to='dcim.DeviceType', related_name="+", blank=True)
+    device_roles = models.ManyToManyField(to='dcim.DeviceRole', related_name="+", blank=True)
+    devices = models.ManyToManyField(to='dcim.Device', related_name="+", blank=True)
+    platforms = models.ManyToManyField(to='dcim.Platform', related_name="+", blank=True)
     inventory_item_roles = models.ManyToManyField(
-        to=InventoryItemRole, related_name="+", blank=True
+        to='dcim.InventoryItemRole', related_name="+", blank=True
     )
     start = models.DateField()
     end = models.DateField(blank=True, null=True)
@@ -513,14 +505,14 @@ class Vulnerability(NetBoxModel):
         to=SoftwareVersion, on_delete=models.CASCADE, related_name="vulnerabilities"
     )
     device = models.ForeignKey(
-        to=Device,
+        to='dcim.Device',
         on_delete=models.CASCADE,
         related_name="vulnerabilities",
         blank=True,
         null=True,
     )
     inventory_item = models.ForeignKey(
-        to=InventoryItem,
+        to='dcim.InventoryItem',
         on_delete=models.CASCADE,
         related_name="vulnerabilities",
         blank=True,

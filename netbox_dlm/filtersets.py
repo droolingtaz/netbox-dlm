@@ -11,7 +11,7 @@ from dcim.models import (
     Platform,
 )
 from netbox.filtersets import NetBoxModelFilterSet
-from utilities.filters import register_filterset
+from utilities.filtersets import register_filterset
 
 from .choices import (
     ContractSupportLevelChoices,

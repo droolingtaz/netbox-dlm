@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.10.0] - 2026-09-03
+
+### Changed
+
+- Raised `max_version` to `4.7.99` — verified against a real NetBox v4.7.0
+  checkout (`manage.py check`, `makemigrations --check`, and template
+  compilation all pass with no plugin changes needed).
 
 ### Added
 
@@ -162,7 +168,8 @@ Initial release.
 - Packaging, CI (package-build sanity + template-compile checks), and PyPI
   release workflow.
 
-[Unreleased]: https://github.com/droolingtaz/netbox-dlm/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/droolingtaz/netbox-dlm/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.10.0
 [0.5.0]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.5.0
 [0.4.1]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.4.1
 [0.4.0]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.4.0

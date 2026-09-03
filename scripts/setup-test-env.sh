@@ -4,7 +4,7 @@
 # and template compilation, never model queries or migrations.
 set -euo pipefail
 
-NETBOX_VERSION="v4.6.4"  # keep in sync with the production host
+NETBOX_VERSION="v4.7.0"  # keep in sync with the production host
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DEV_DIR="$REPO_ROOT/.dev"
 NETBOX_SRC="$DEV_DIR/netbox-src"

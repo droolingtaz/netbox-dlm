@@ -9,10 +9,10 @@ class DeviceLifecycleConfig(PluginConfig):
         "validated-software compliance, CVE/vulnerability exposure, and maintenance "
         "contracts — modeled after Nautobot's Device Lifecycle Management app."
     )
-    version = "0.9.1"
+    version = "0.10.0"
     base_url = "device-lifecycle"
     min_version = "4.5.0"
-    max_version = "4.6.99"
+    max_version = "4.7.99"
     default_settings = {
         # Set to a NIST NVD API key to raise CVE-lookup rate limits (optional).
         "nist_api_key": None,

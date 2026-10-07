@@ -151,6 +151,9 @@ class SoftwareVersionView(generic.ObjectView):
             "validated_rules": instance.validated_rules.all(),
             "cves": instance.cves.all(),
             "devices_running": instance.devices_running.select_related("device"),
+            "inventory_items_running": instance.inventory_items_running.select_related(
+                "inventory_item__device"
+            ),
         }
 
 

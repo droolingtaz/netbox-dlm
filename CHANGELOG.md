@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.1] - 2026-10-07
+
+### Fixed
+
+- The `SoftwareVersion` detail page now has an "Inventory Items Running"
+  panel listing each `InventoryItemSoftware` record (inventory item and its
+  parent device). Previously only devices were shown, even though the list
+  page's Inventory Items column counted them.
+
 ## [0.10.0] - 2026-09-03
 
 ### Changed
@@ -168,7 +177,8 @@ Initial release.
 - Packaging, CI (package-build sanity + template-compile checks), and PyPI
   release workflow.
 
-[Unreleased]: https://github.com/droolingtaz/netbox-dlm/compare/v0.10.0...HEAD
+[Unreleased]: https://github.com/droolingtaz/netbox-dlm/compare/v0.10.1...HEAD
+[0.10.1]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.10.1
 [0.10.0]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.10.0
 [0.5.0]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.5.0
 [0.4.1]: https://github.com/droolingtaz/netbox-dlm/releases/tag/v0.4.1

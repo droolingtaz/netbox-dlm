@@ -59,7 +59,7 @@
 </div>
 
 <div class="row mb-3">
-  <div class="col col-md-3">
+  <div class="col col-md-4">
     <div class="card">
       <h5 class="card-header">Image Files ({{ image_files.count }})</h5>
       <ul class="list-group list-group-flush">
@@ -71,7 +71,7 @@
       </ul>
     </div>
   </div>
-  <div class="col col-md-3">
+  <div class="col col-md-4">
     <div class="card">
       <h5 class="card-header">Validated Software Rules ({{ validated_rules.count }})</h5>
       <ul class="list-group list-group-flush">
@@ -86,7 +86,7 @@
       </ul>
     </div>
   </div>
-  <div class="col col-md-3">
+  <div class="col col-md-4">
     <div class="card">
       <h5 class="card-header">CVEs ({{ cves.count }})</h5>
       <ul class="list-group list-group-flush">
@@ -101,12 +101,30 @@
       </ul>
     </div>
   </div>
-  <div class="col col-md-3">
+</div>
+
+<div class="row mb-3">
+  <div class="col col-md-6">
     <div class="card">
       <h5 class="card-header">Devices Running ({{ devices_running.count }})</h5>
       <ul class="list-group list-group-flush">
         {% for ds in devices_running %}
         <li class="list-group-item">{{ ds.device|linkify }}</li>
+        {% empty %}
+        <li class="list-group-item text-muted">None</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="col col-md-6">
+    <div class="card">
+      <h5 class="card-header">Inventory Items Running ({{ inventory_items_running.count }})</h5>
+      <ul class="list-group list-group-flush">
+        {% for iis in inventory_items_running %}
+        <li class="list-group-item">
+          {{ iis.inventory_item|linkify }}
+          <span class="text-muted">on {{ iis.inventory_item.device|linkify }}</span>
+        </li>
         {% empty %}
         <li class="list-group-item text-muted">None</li>
         {% endfor %}

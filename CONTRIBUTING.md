@@ -14,9 +14,23 @@ full NetBox environment:
 ./scripts/test-templates.sh
 ```
 
+Enable the repo's commit-msg hook once per clone:
+
+```bash
+git config core.hooksPath .githooks
+```
+
 See [README.md](README.md) for full installation instructions against a real
 NetBox host, and the "Testing" section for what template-compile checks do
 and don't catch.
+
+## Commit messages
+
+Commits follow [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/#specification),
+e.g. `feat(models): add EoL date to SoftwareVersion` or
+`fix: correct CVE severity colors`. The hook above rejects anything else;
+see the "Commit messages" section of [AGENTS.md](AGENTS.md) for the full
+list of types and scope conventions.
 
 ## Before opening a PR
 

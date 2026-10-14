@@ -66,6 +66,35 @@ referencing a model field that silently resolves to nothing at render time.
   (and `netbox_dlm/__init__.py`'s `version = "..."`, which is separate and
   not currently checked against the tag) before tagging.
 
+## Commit messages
+
+Every commit must follow [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/#specification):
+
+```
+<type>[optional scope][!]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+- Types: `feat`, `fix`, `docs`, `refactor`, `perf`, `test`, `build`, `ci`,
+  `chore`, `style`, `revert`. Use `feat` for new user-visible behavior and
+  `fix` for bug fixes; the rest for everything else.
+- Scope is optional and lowercase, e.g. `feat(models):`, `fix(templates):`,
+  `build(deps):`.
+- Description is imperative and lowercase-led, with no trailing period:
+  `fix: import views.py in urls.py to resolve NoReverseMatch`.
+- Breaking changes (e.g. dropping a NetBox version, removing a field) get
+  `!` after the type/scope and/or a `BREAKING CHANGE:` footer.
+- Version bumps for a release: `chore(release): 0.11.0`.
+- A blank line separates the subject from the body; trailers such as
+  `Co-Authored-By:` go in the footer.
+
+`.githooks/commit-msg` enforces the subject format. It only runs if the
+clone has `git config core.hooksPath .githooks` set — don't bypass it with
+`--no-verify`.
+
 ## Conventions
 
 - Models follow NetBox's plugin patterns: `NetBoxModel` base class, one
